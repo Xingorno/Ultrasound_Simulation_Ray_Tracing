@@ -1,4 +1,4 @@
-# Install script for directory: /home/sxing_l/Documents/UsSimulation/test/burgercpp
+# Install script for directory: /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

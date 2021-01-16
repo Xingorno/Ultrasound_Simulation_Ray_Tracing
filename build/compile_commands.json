@@ -1,22 +1,22 @@
 [
 {
-  "directory": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build",
-  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/test/burgercpp/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/main.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/main.cpp",
-  "file": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/main.cpp"
+  "directory": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build",
+  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/main.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/main.cpp",
+  "file": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/main.cpp"
 },
 {
-  "directory": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build",
-  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/test/burgercpp/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/scene.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/scene.cpp",
-  "file": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/scene.cpp"
+  "directory": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build",
+  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/scene.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/scene.cpp",
+  "file": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/scene.cpp"
 },
 {
-  "directory": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build",
-  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/test/burgercpp/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/ray.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/ray.cpp",
-  "file": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/ray.cpp"
+  "directory": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build",
+  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/ray.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.cpp",
+  "file": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.cpp"
 },
 {
-  "directory": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build",
-  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/test/burgercpp/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/wavefront/tiny_obj_loader.cpp",
-  "file": "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/wavefront/tiny_obj_loader.cpp"
+  "directory": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build",
+  "command": "/bin/g++-9   -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/include -isystem /usr/local/include/opencv   -fopenmp -std=c++14 -g   -o CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/wavefront/tiny_obj_loader.cpp",
+  "file": "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/wavefront/tiny_obj_loader.cpp"
 }
 ]

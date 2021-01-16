@@ -6,5 +6,5 @@ CXX_FLAGS =  -fopenmp -std=c++14 -g
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/test/burgercpp/include -isystem /usr/local/include/opencv 
+CXX_INCLUDES = -I/usr/local/include/bullet -I/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/include -isystem /usr/local/include/opencv 
 

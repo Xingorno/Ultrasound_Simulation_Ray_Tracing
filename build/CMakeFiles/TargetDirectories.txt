@@ -1,3 +1,3 @@
-/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/rebuild_cache.dir
-/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/edit_cache.dir
-/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/burgercpp.dir
+/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/rebuild_cache.dir
+/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/edit_cache.dir
+/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/burgercpp.dir

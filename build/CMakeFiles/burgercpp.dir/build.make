@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sxing_l/Documents/UsSimulation/test/burgercpp
+CMAKE_SOURCE_DIR = /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sxing_l/Documents/UsSimulation/test/burgercpp/build
+CMAKE_BINARY_DIR = /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/burgercpp.dir/depend.make
@@ -59,55 +59,55 @@ include CMakeFiles/burgercpp.dir/flags.make
 
 CMakeFiles/burgercpp.dir/src/main.cpp.o: CMakeFiles/burgercpp.dir/flags.make
 CMakeFiles/burgercpp.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/burgercpp.dir/src/main.cpp.o"
-	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/main.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/burgercpp.dir/src/main.cpp.o"
+	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/main.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/main.cpp
 
 CMakeFiles/burgercpp.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/burgercpp.dir/src/main.cpp.i"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/main.cpp > CMakeFiles/burgercpp.dir/src/main.cpp.i
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/main.cpp > CMakeFiles/burgercpp.dir/src/main.cpp.i
 
 CMakeFiles/burgercpp.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/burgercpp.dir/src/main.cpp.s"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/main.cpp -o CMakeFiles/burgercpp.dir/src/main.cpp.s
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/main.cpp -o CMakeFiles/burgercpp.dir/src/main.cpp.s
 
 CMakeFiles/burgercpp.dir/src/scene.cpp.o: CMakeFiles/burgercpp.dir/flags.make
 CMakeFiles/burgercpp.dir/src/scene.cpp.o: ../src/scene.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/burgercpp.dir/src/scene.cpp.o"
-	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/scene.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/scene.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/burgercpp.dir/src/scene.cpp.o"
+	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/scene.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/scene.cpp
 
 CMakeFiles/burgercpp.dir/src/scene.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/burgercpp.dir/src/scene.cpp.i"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/scene.cpp > CMakeFiles/burgercpp.dir/src/scene.cpp.i
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/scene.cpp > CMakeFiles/burgercpp.dir/src/scene.cpp.i
 
 CMakeFiles/burgercpp.dir/src/scene.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/burgercpp.dir/src/scene.cpp.s"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/scene.cpp -o CMakeFiles/burgercpp.dir/src/scene.cpp.s
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/scene.cpp -o CMakeFiles/burgercpp.dir/src/scene.cpp.s
 
 CMakeFiles/burgercpp.dir/src/ray.cpp.o: CMakeFiles/burgercpp.dir/flags.make
 CMakeFiles/burgercpp.dir/src/ray.cpp.o: ../src/ray.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/burgercpp.dir/src/ray.cpp.o"
-	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/ray.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/ray.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/burgercpp.dir/src/ray.cpp.o"
+	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/ray.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.cpp
 
 CMakeFiles/burgercpp.dir/src/ray.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/burgercpp.dir/src/ray.cpp.i"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/ray.cpp > CMakeFiles/burgercpp.dir/src/ray.cpp.i
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.cpp > CMakeFiles/burgercpp.dir/src/ray.cpp.i
 
 CMakeFiles/burgercpp.dir/src/ray.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/burgercpp.dir/src/ray.cpp.s"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/ray.cpp -o CMakeFiles/burgercpp.dir/src/ray.cpp.s
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.cpp -o CMakeFiles/burgercpp.dir/src/ray.cpp.s
 
 CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o: CMakeFiles/burgercpp.dir/flags.make
 CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o: ../src/wavefront/tiny_obj_loader.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o"
-	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o -c /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/wavefront/tiny_obj_loader.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o"
+	/bin/g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o -c /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/wavefront/tiny_obj_loader.cpp
 
 CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.i"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/wavefront/tiny_obj_loader.cpp > CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.i
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/wavefront/tiny_obj_loader.cpp > CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.i
 
 CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.s"
-	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/test/burgercpp/src/wavefront/tiny_obj_loader.cpp -o CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.s
+	/bin/g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/wavefront/tiny_obj_loader.cpp -o CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.s
 
 # Object files for target burgercpp
 burgercpp_OBJECTS = \
@@ -146,7 +146,7 @@ burgercpp: /usr/local/lib/libopencv_imgcodecs.so.3.4.12
 burgercpp: /usr/local/lib/libopencv_imgproc.so.3.4.12
 burgercpp: /usr/local/lib/libopencv_core.so.3.4.12
 burgercpp: CMakeFiles/burgercpp.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable burgercpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable burgercpp"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/burgercpp.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -159,6 +159,6 @@ CMakeFiles/burgercpp.dir/clean:
 .PHONY : CMakeFiles/burgercpp.dir/clean
 
 CMakeFiles/burgercpp.dir/depend:
-	cd /home/sxing_l/Documents/UsSimulation/test/burgercpp/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/sxing_l/Documents/UsSimulation/test/burgercpp /home/sxing_l/Documents/UsSimulation/test/burgercpp /home/sxing_l/Documents/UsSimulation/test/burgercpp/build /home/sxing_l/Documents/UsSimulation/test/burgercpp/build /home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/burgercpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/burgercpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/burgercpp.dir/depend
 

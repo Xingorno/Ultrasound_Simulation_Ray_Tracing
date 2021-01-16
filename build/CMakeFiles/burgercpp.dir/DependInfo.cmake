@@ -4,10 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/main.cpp" "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/burgercpp.dir/src/main.cpp.o"
-  "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/ray.cpp" "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/burgercpp.dir/src/ray.cpp.o"
-  "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/scene.cpp" "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/burgercpp.dir/src/scene.cpp.o"
-  "/home/sxing_l/Documents/UsSimulation/test/burgercpp/src/wavefront/tiny_obj_loader.cpp" "/home/sxing_l/Documents/UsSimulation/test/burgercpp/build/CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o"
+  "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/main.cpp" "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/burgercpp.dir/src/main.cpp.o"
+  "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.cpp" "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/burgercpp.dir/src/ray.cpp.o"
+  "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/scene.cpp" "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/burgercpp.dir/src/scene.cpp.o"
+  "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/wavefront/tiny_obj_loader.cpp" "/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/build/CMakeFiles/burgercpp.dir/src/wavefront/tiny_obj_loader.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
