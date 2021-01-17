@@ -78,7 +78,8 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
             }
         }
         size_t ray_i = 473;
-        // for (size_t ray_i = 0; ray_i < ray_count; ray_i++)
+        // size_t ray_i = 343;
+        for (size_t ray_i = 0; ray_i < ray_count; ray_i++)
         {
             // auto & segments_vector = segments[ray_i];
             auto & samples_vector = segments[ray_i];
@@ -122,14 +123,14 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                     float r_length = ray_physics::max_ray_length(ray_); //[mm]
                     auto to = ray_.from + enlarge(ray_.direction, r_length); //[mm]
             
-                    btCollisionWorld::ClosestRayResultCallback closestResults(ray_.from + ray_.direction * 0.1 ,to); // adding ray_direction * 0.1 is for uncorrect ray tracing operation nearby the "from" point 
+                    btCollisionWorld::ClosestRayResultCallback closestResults(ray_.from + ray_.direction ,to); // adding ray_direction * 0.1 is for uncorrect ray tracing operation nearby the "from" point 
                     
-                    m_dynamicsWorld->rayTest(ray_.from + ray_.direction * 0.1,to,closestResults);
+                    m_dynamicsWorld->rayTest(ray_.from + ray_.direction,to,closestResults);
 
                     btCollisionWorld::ClosestRayResultCallback closestResults1(closestResults.m_hitPointWorld,to);
                     m_dynamicsWorld->rayTest(closestResults.m_hitPointWorld,to,closestResults1);
   
-                  
+                    
                     tests++;
 
                     ray_stack.pop_back();
@@ -146,19 +147,39 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                         // Calculate refraction and reflection directions and intensities
                         //compute the distance between the closet point and all hit point
                         mesh* organ;
+                        mesh* organ1;
                         if (!closestResults1.hasHit())
                         {
                             organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
                         }
-                        
-                        if (closestResults.m_hitPointWorld.distance(closestResults1.m_hitPointWorld) < 0.01)
-                        {
-                            organ = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
-                        }
                         else
                         {
-                            organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                            float distance = closestResults.m_hitPointWorld.distance(closestResults1.m_hitPointWorld);
+                            if ( distance < 1.2)
+                            {   
+                                btVector3 delta = closestResults.m_hitPointWorld - closestResults1.m_hitPointWorld;
+                                float vector_product = ray_.direction.dot(delta);
+                                
+                                if (vector_product < 0)
+                                {
+                                    organ = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
+                                }
+                                else
+                                {
+                                    organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                                }
+                                
+                                // organ = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
+                                organ1= static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                            }
+                            else
+                            {
+                                organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                            }
                         }
+                        
+                        
+                        
                         // const auto organ= static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
                         assert(organ);
 
