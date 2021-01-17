@@ -77,9 +77,8 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                 segments_vector.reserve(ray::max_depth);
             }
         }
-        //#pragma omp parallel for
-        // size_t ray_i = 200;
-        for (size_t ray_i = 0; ray_i < ray_count; ray_i++)
+        size_t ray_i = 473;
+        // for (size_t ray_i = 0; ray_i < ray_count; ray_i++)
         {
             // auto & segments_vector = segments[ray_i];
             auto & samples_vector = segments[ray_i];
@@ -92,8 +91,6 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                 // {
                 ray first_ray
                 {
-                    //transducer_pos + btVector3(0,0,ray_start_step * ray_i),
-                    //transducer.element(ray_i).position + btVector3(0, 0, -ray_start_step * indexMove ),
                     transducer.element(ray_i, sample_i).position,                          // from [mm]
                     transducer.element(ray_i, sample_i).direction,                         // initial direction
                     0,                                                           // depth
@@ -125,10 +122,14 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                     float r_length = ray_physics::max_ray_length(ray_); //[mm]
                     auto to = ray_.from + enlarge(ray_.direction, r_length); //[mm]
             
-                    btCollisionWorld::ClosestRayResultCallback closestResults(ray_.from + ray_.direction * 0.1,to); // adding ray_direction * 0.1 is for uncorrect ray tracing operation nearby the "from" point 
-
+                    btCollisionWorld::ClosestRayResultCallback closestResults(ray_.from + ray_.direction * 0.1 ,to); // adding ray_direction * 0.1 is for uncorrect ray tracing operation nearby the "from" point 
+                    
                     m_dynamicsWorld->rayTest(ray_.from + ray_.direction * 0.1,to,closestResults);
 
+                    btCollisionWorld::ClosestRayResultCallback closestResults1(closestResults.m_hitPointWorld,to);
+                    m_dynamicsWorld->rayTest(closestResults.m_hitPointWorld,to,closestResults1);
+  
+                  
                     tests++;
 
                     ray_stack.pop_back();
@@ -143,13 +144,29 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                         ray_physics::travel(ray_, distance_in_mm(ray_.from, closestResults.m_hitPointWorld));
 
                         // Calculate refraction and reflection directions and intensities
-                        const auto organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                        //compute the distance between the closet point and all hit point
+                        mesh* organ;
+                        if (!closestResults1.hasHit())
+                        {
+                            organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                        }
+                        
+                        if (closestResults.m_hitPointWorld.distance(closestResults1.m_hitPointWorld) < 0.01)
+                        {
+                            organ = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
+                        }
+                        else
+                        {
+                            organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                        }
+                        // const auto organ= static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
                         assert(organ);
 
                         auto result = ray_physics::hit_boundary(ray_, closestResults.m_hitPointWorld, closestResults.m_hitNormalWorld, *organ);
 
                         // Register collision creating a segment from the beginning of the ray to the collision point
                         //segments_vector.emplace_back(segment{ray_.from, closestResults.m_hitPointWorld, ray_.direction, result.reflected_intensity, intensity_before_hit, ray_.media.attenuation, result.reflection.distance_traveled, ray_.media});
+                        
 
                         // segments_vector.emplace_back(segment{ray_.from, closestResults.m_hitPointWorld, ray_.direction, result.reflected_intensity, intensity_before_hit, ray_.media.attenuation, distance_before_hit, ray_.media});
                         samples_vector[sample_i].emplace_back(segment{ray_.from, closestResults.m_hitPointWorld, ray_.direction, result.reflected_intensity, intensity_before_hit, ray_.media.attenuation, distance_before_hit, ray_.media});
@@ -163,11 +180,6 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                             ray_stack.push_back(result.refraction);
                             // samples.at(sample_i) = result.refraction;
                         }
-                        // else
-                        // {
-                        //     samples.at(sample_i).null = true;
-                        // }
-                        
 
                         // if (result.reflection.intensity > ray::intensity_epsilon)
                         // {

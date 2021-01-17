@@ -64,9 +64,10 @@ public:
 
             for(size_t i = 0; i < sample_count; i++)
             {
-                double delta_x = distribution(generator);
-                double delta_z = distribution(generator);
-
+                // double delta_x = distribution(generator);
+                double delta_x = 0;
+                // double delta_z = distribution(generator);
+                double delta_z = 0;
                 samples_elements[i] = transducer_element
                 {   
                     position + btVector3 (delta_x, 10*radius.to<float>(), delta_z).rotate(btVector3(0,0,1), -angle.to<float>()).rotate(btVector3(0,0,1), z_angle.to<float>())

@@ -131,7 +131,8 @@ int main(int argc, char** argv)
                             // float scattering = 0;
                             float scatter = intensity * scattering + distr(generator);
                             // float scatter = intensity * scattering;
-                            // scatter = 0;
+                            scatter = 0;
+
                             rf_image.add_echo(ray_i, scatter, time_elapsed);
                         
                             // Step forward through the segment, decreasing intensity using Beer-Lambert's law
@@ -153,7 +154,7 @@ int main(int argc, char** argv)
 
             // rf_image.convolve(psf);
 
-            rf_image.envelope();
+            // rf_image.envelope();
 
             rf_image.postprocess();
 

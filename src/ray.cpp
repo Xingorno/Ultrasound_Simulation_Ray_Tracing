@@ -14,40 +14,42 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
 
     // TODO: this logic can probably be simpler
     const material * material_after_vascularities = nullptr;
-    const auto & material_after_collision = [&r, &collided_mesh, &material_after_vascularities]() -> const material &
-    {
-        if (r.media_outside) // if we are in a vessel
-        {
-            if (collided_mesh.is_vascular) // and we collided against a vessel (assuming same vessel, so we're getting out of it)
-            {
-                material_after_vascularities = nullptr;
-                return *r.media_outside; // we are going back to the stored media
-            }
-            // UNDONE
-            else // we are still inside the vessel but went out of the surrounding organ
-            {
-                // update the surrounding tissue
-                material_after_vascularities = r.media_outside == &collided_mesh.material_inside ? &collided_mesh.material_outside : &collided_mesh.material_inside;
-                // but we remain in the same media, i.e. the vessel
-                return r.media;
-            }
-        }
-        else // we are not in a vessel
-        {
-            if (collided_mesh.is_vascular) // and we collided with a vessel
-            {
-                // update the surrounding tissue
-                material_after_vascularities = &r.media; // we will come back to this tissue after getting out of the vessel
-                return collided_mesh.material_inside;
-            }
-            else // and we collided with a regular organ
-            {
-                material_after_vascularities = nullptr;
-                return &r.media == &collided_mesh.material_inside ? collided_mesh.material_outside : collided_mesh.material_inside;
-            }
-        }
-    }();
-
+    // const auto & material_after_collision = [&r, &collided_mesh, &material_after_vascularities]() -> const material &
+    // {
+    //     if (r.media_outside) // if we are in a vessel
+    //     {
+    //         if (collided_mesh.is_vascular) // and we collided against a vessel (assuming same vessel, so we're getting out of it)
+    //         {
+    //             material_after_vascularities = nullptr;
+    //             return *r.media_outside; // we are going back to the stored media
+    //         }
+    //         // UNDONE
+    //         else // we are still inside the vessel but went out of the surrounding organ
+    //         {
+    //             // update the surrounding tissue
+    //             material_after_vascularities = r.media_outside == &collided_mesh.material_inside ? &collided_mesh.material_outside : &collided_mesh.material_inside;
+    //             // but we remain in the same media, i.e. the vessel
+    //             return r.media;
+    //         }
+    //     }
+    //     else // we are not in a vessel
+    //     {
+    //         if (collided_mesh.is_vascular) // and we collided with a vessel
+    //         {
+    //             // update the surrounding tissue
+    //             material_after_vascularities = &r.media; // we will come back to this tissue after getting out of the vessel
+    //             return collided_mesh.material_inside;
+    //         }
+    //         else // and we collided with a regular organ
+    //         {
+    //             material_after_vascularities = nullptr;
+    //             return &r.media == &collided_mesh.material_inside ? collided_mesh.material_outside : collided_mesh.material_inside;
+    //         }
+    //     }
+    // }();
+    // Given this 
+    const auto & material_after_collision = collided_mesh.material_outside;
+    
     //power-cosine distribution random normal
     float random_angle = power_cosine_variate(material_after_collision.roughness); // par: s shininess : ( 0 = diffuse; inf = specular)
     btVector3 random_normal = random_unit_vector(surface_normal, random_angle);
@@ -63,23 +65,23 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
 
     const float refr_ratio = r.media.impedance / material_after_collision.impedance;
     
-    // Refraction angle
-    float refraction_angle = 1 - refr_ratio*refr_ratio * (1 - incidence_angle*incidence_angle);
+    // // Refraction angle
+    // float refraction_angle = 1 - refr_ratio*refr_ratio * (1 - incidence_angle*incidence_angle);
     
-    refraction_angle = std::sqrt(refraction_angle);
+    // refraction_angle = std::sqrt(refraction_angle);
 
-    // Note: modify the refraction angle due to the strong refraction effect
-    float theta_incidence_rad = acos(incidence_angle);
-    float theta_refraction_rad = acos(refraction_angle);
-    refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*0/5 + theta_incidence_rad); 
-    const bool total_internal_reflection = refraction_angle < 0;
-    // Refraction direction
-    const auto refraction_direction = snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
-    
-    // /* Orthognal incidence */
-    // float refraction_angle = incidence_angle;
+    // // Note: modify the refraction angle due to the strong refraction effect
+    // float theta_incidence_rad = acos(incidence_angle);
+    // float theta_refraction_rad = acos(refraction_angle);
+    // refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*0/5 + theta_incidence_rad); 
     // const bool total_internal_reflection = refraction_angle < 0;
-    // const auto refraction_direction = r.direction;
+    // // Refraction direction
+    // const auto refraction_direction = snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
+    
+    /* Orthognal incidence */
+    float refraction_angle = incidence_angle;
+    const bool total_internal_reflection = refraction_angle < 0;
+    const auto refraction_direction = r.direction;
     
     // Reflection direction
     
