@@ -1,15 +1,15 @@
 
 {
   "workingDirectory": "examples/3Dircadb/01/",
-  "transducerPosition": [-10, -15, -96],
-  "transducerAngles": [0, 0, 20.0],
+  "transducerPosition": [-10, -15, -80],
+  "transducerAngles": [0, 0, 10.0],
   "materials": [
     {
       "name": "GEL",
       "impedance": 1.30,
       "attenuation": 0.0002,
-      "mu0": 0.0,
-      "mu1": 0.7,
+      "mu0": 0.05,
+      "mu1": 0.5,
       "sigma": 0.02,
       "specularity": 1.0,
       "roughness": 10000
@@ -50,7 +50,7 @@
       "impedance": 1.65,
       "attenuation": 0.4,
       "mu0": 0.1,
-      "mu1": 0.5,
+      "mu1": 0.1,
       "sigma": 0.2,
       "specularity": 1.0,
       "roughness": 1000000
@@ -89,10 +89,20 @@
       "name": "KIDNEY",
       "impedance": 1.63,
       "attenuation": 0.3,
-      "mu0": 0.4,
-      "mu1": 0.6,
+      "mu0": 0.2,
+      "mu1": 0.1,
       "sigma": 0.3,
-      "specularity": 0.2,
+      "specularity": 1.0,
+      "roughness": 1000000
+    },
+     {
+      "name": "SPLEEN",
+      "impedance": 1.63,
+      "attenuation": 0.3,
+      "mu0": 0.2,
+      "mu1": 0.1,
+      "sigma": 0.3,
+      "specularity": 1.0,
       "roughness": 1000000
     },
     {
@@ -110,7 +120,7 @@
       "impedance": 1.71,
       "attenuation": 0.2,
       "mu0": 0.4,
-      "mu1": 0.6,
+      "mu1": 0.1,
       "sigma": 0.3,
       "specularity": 1.0,
       "roughness": 10000
@@ -120,7 +130,7 @@
       "impedance": 1.71,
       "attenuation": 0.2,
       "mu0": 0.05,
-      "mu1": 0.6,
+      "mu1": 0.2,
       "sigma": 0.1,
       "specularity": 1.0,
       "roughness": 10000
@@ -129,14 +139,88 @@
       "name": "SKIN",
       "impedance": 1.71,
       "attenuation": 0.2,
-      "mu0": 0.0,
-      "mu1": 0.5,
-      "sigma": 0.005,
+      "mu0": 0.08,
+      "mu1": 0.1,
+      "sigma": 0.1,
       "specularity": 1.0,
       "roughness": 10000
     }
   ],
   "meshes": [
+    {
+      "file": "Aorta.obj",
+      "rigid": true,
+      "vascular": true,
+      "deltas": [0, 0, 0],
+      "material": "VESSEL",
+      "outsideMaterial": "VESSEL",
+      "outsideNormals": true
+    },
+    {
+      "file": "Bone.obj",
+      "rigid": true,
+      "vascular": false,
+      "deltas": [0, 0, 0],
+      "material": "BONE",
+      "outsideMaterial": "BONE",
+      "outsideNormals": true
+    },
+    {
+      "file": "HepaticVein.obj",
+      "rigid": true,
+      "vascular": true,
+      "deltas": [0, 0, 0],
+      "material": "VESSEL",
+      "outsideMaterial": "VESSEL",
+      "outsideNormals": true
+    },
+    {
+      "file": "LeftKidney.obj",
+      "rigid": true,
+      "vascular": false,
+      "deltas": [0, 0, 0],
+      "material": "KIDNEY",
+      "outsideMaterial": "KIDNEY",
+      "outsideNormals": true
+    },
+    {
+      "file": "Liver_scale.obj",
+      "rigid": true,
+      "vascular": false,
+      "deltas": [0, 0, 0],
+      "material": "LIVER",
+      "outsideMaterial": "LIVER",
+      "outsideNormals": true
+    },
+    
+    {
+      "file": "LiverTumor.obj",
+      "rigid": true,
+      "vascular": false,
+      "deltas": [0, 0, 0],
+      "material": "LIVERTUMOR",
+      "outsideMaterial": "LIVERTUMOR",
+      "outsideNormals": true
+    },
+     
+    {
+      "file": "PortalVein.obj",
+      "rigid": true,
+      "vascular": true,
+      "deltas": [0, 0, 0],
+      "material": "VESSEL",
+      "outsideMaterial": "VESSEL",
+      "outsideNormals": true
+    },
+    {
+      "file": "RightKidney.obj",
+      "rigid": true,
+      "vascular": false,
+      "deltas": [0, 0, 0],
+      "material": "KIDNEY",
+      "outsideMaterial": "KIDNEY",
+      "outsideNormals": true
+    },
     {
       "file": "Skin1.obj",
       "rigid": true,
@@ -147,43 +231,23 @@
       "outsideNormals": true
     },
     {
-      "file": "LiverTumor.obj",
+      "file": "Spleen.obj",
       "rigid": true,
       "vascular": false,
       "deltas": [0, 0, 0],
-      "material": "LIVERTUMOR",
-      "outsideMaterial": "LIVERTUMOR",
+      "material": "SPLEEN",
+      "outsideMaterial": "SPLEEN",
       "outsideNormals": true
     },
-     {
-      "file": "HepaticVein.obj",
+    {
+      "file": "VenaCava.obj",
       "rigid": true,
       "vascular": true,
       "deltas": [0, 0, 0],
       "material": "VESSEL",
       "outsideMaterial": "VESSEL",
-      "outsideNormals": true
-    },
-    {
-      "file": "PortalVein.obj",
-      "rigid": true,
-      "vascular": true,
-      "deltas": [0, 0, 0],
-      "material": "VESSEL",
-      "outsideMaterial": "VESSEL",
-      "outsideNormals": true
-    },
-
-    {
-      "file": "Liver_scale.obj",
-      "rigid": true,
-      "vascular": false,
-      "deltas": [0, 0, 0],
-      "material": "LIVER",
-      "outsideMaterial": "LIVER",
       "outsideNormals": true
     }
-
   ],
   "origin": [0, 0, 0],
   "spacing": [1.0,1.0,1.0],
