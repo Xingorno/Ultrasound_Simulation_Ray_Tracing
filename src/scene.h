@@ -80,6 +80,7 @@ protected:
     std::unique_ptr<btDiscreteDynamicsWorld> m_dynamicsWorld;
 
     btVector3 transducer_pos;
+    float skip_scale; 
     std::array<units::angle::degree_t, 3> transducer_dir;
 
     clock_t frame_start;

@@ -66,28 +66,31 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
 
     const float refr_ratio = r.media.impedance / material_after_collision.impedance;
     
-    // // Refraction angle
-    // float refraction_angle = 1 - refr_ratio*refr_ratio * (1 - incidence_angle*incidence_angle);
+    // Refraction angle
+    float refraction_angle = 1 - refr_ratio*refr_ratio * (1 - incidence_angle*incidence_angle);
     
-    // refraction_angle = std::sqrt(refraction_angle);
+    refraction_angle = std::sqrt(refraction_angle);
 
-    // // Note: modify the refraction angle due to the strong refraction effect
-    // float theta_incidence_rad = acos(incidence_angle);
-    // float theta_refraction_rad = acos(refraction_angle);
-    // refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*0/5 + theta_incidence_rad); 
-    // const bool total_internal_reflection = refraction_angle < 0;
-    // // Refraction direction
-    // const auto refraction_direction = snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
-    
-    /* Orthognal incidence */
-    float refraction_angle = incidence_angle;
+    // Note: modify the refraction angle due to the strong refraction effect
+    float theta_incidence_rad = acos(incidence_angle);
+    float theta_refraction_rad = acos(refraction_angle);
+    refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*4/5 + theta_incidence_rad); 
     const bool total_internal_reflection = refraction_angle < 0;
-    const auto refraction_direction = r.direction;
+    // Refraction direction
+    
+    // const auto refraction_direction = snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
+    const auto refraction_direction = total_internal_reflection ? r.direction.cross(random_normal) : snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
+    
+    // /* Orthognal incidence */
+    // float refraction_angle = incidence_angle;
+    // const bool total_internal_reflection = refraction_angle < 0;
+    // const auto refraction_direction = r.direction;
     
     // Reflection direction
     
     btVector3 reflection_direction1 = r.direction + 2*incidence_angle * random_normal;
     const btVector3 reflection_direction = reflection_direction1.safeNormalize();
+
 
 
     // Reflection intensity
@@ -150,17 +153,31 @@ bool ray_physics::should_travel(const ray & r)
 float ray_physics::max_ray_length(const ray & r)
 {
     // Equation (2), following Beer-Lambert law
-    return 10.f /*<- cm to mm*/ * 10.f /* dB = 10*log()*/ *std::log(ray::intensity_epsilon/r.intensity) / (-r.media.attenuation * r.frequency);
+    float length = 10.f /*<- cm to mm*/ * 10.f /* dB = 10*log()*/ *std::log(ray::intensity_epsilon/r.intensity) / (-r.media.attenuation * r.frequency);
+    return length > 150 ? 150: length;
 }
 
 btVector3 ray_physics::snells_law(const btVector3 & ray_direction, const btVector3 & surface_normal, float incidence_angle, float refraction_angle, float refr_ratio)
 {
     // For more details, read https://en.wikipedia.org/wiki/Snell%27s_law#Vector_form
+    
+    float scale = 1;
+    float tem = ray_direction.dot(surface_normal);
+    if (tem > 0) // looks like Physics bullet can not identify the direction of surface normal, we try to identify them by coding
+    {   
+        scale = -1;
+    }
+    else 
+    {
+        scale = 1;
+    }
     const btVector3 & l = ray_direction;
     const btVector3 & n = surface_normal;
     const float c = incidence_angle;
     const float r = refr_ratio;
-    btVector3 temp = ( r * l + (r*c - refraction_angle) * n );
+    
+
+    btVector3 temp = ( r * l + (r*c - refraction_angle) * n * scale );
 
     return temp.safeNormalize();
     
