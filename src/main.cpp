@@ -114,7 +114,6 @@ int main(int argc, char** argv)
                     // for (auto & segment : ray)
                     for(auto & segment: sample)
                     {
-
                         const auto starting_micros = rf_image.micros_traveled(segment.distance_traveled /*mm -> μm*/);
                         const auto distance = scene.distance(segment.from, segment.to); // [mm]
                         const auto steps = distance / axial_resolution;
@@ -132,6 +131,7 @@ int main(int argc, char** argv)
                             float scatter = intensity * scattering + distr(generator);
                             // float scatter = intensity * scattering;
                             // scatter = 0;
+
 
                             rf_image.add_echo(ray_i, scatter, time_elapsed);
                         

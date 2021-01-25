@@ -10,7 +10,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/burgercpp",
-            "args": ["examples/3Dircadb/01_1/data01.scene"],
+            "args": ["examples/Phantom/phantom.scene"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
