@@ -181,29 +181,15 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                                 {
                                     organ = organ_first_hit;
                                 }
-                                // else
-                                // {
-                                //     // std::cout << "Error may exist" << std::endl;
-                                // }
-                                
-                                
-                                
-                                
-                                // btVector3 delta = closestResults.m_hitPointWorld - closestResults1.m_hitPointWorld;
-                                // float vector_product = ray_.direction.dot(delta);
-                                
-                                // if (vector_product < 0)
-                                // {
-                                //     organ = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
+                                else
+                                {   
                                     
-                                // }
-                                // else
-                                // {
-                                //     organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
-                                // }
+                                    organ = &organ_temp;
+                                    
+                                }
+
                                 skip_scale = 1;
-                                // organ = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
-                                // organ1= static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                                
                             }
                             else
                             {

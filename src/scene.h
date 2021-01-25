@@ -44,6 +44,7 @@ public:
     units::length::millimeter_t distance(const btVector3 & from, const btVector3 & to) const;
 
     int indexMove = 0;
+    
 
 protected:
     std::string working_dir;
@@ -87,6 +88,26 @@ protected:
     std::array<units::angle::degree_t, 3> transducer_dir;
 
     clock_t frame_start;
+    const material temp_fat
+    {
+        1.48, //"impedance"
+        0.0002, //"attenuation"
+        0.001, //"mu0"
+        0.5, //"mu1"
+        0.05, //"sigma"
+        1.0, //"specularity"
+        10000 //"roughness"
+    };
+    mesh organ_temp
+    {
+        "ORGAN_TEMP",
+        true,
+        true,
+        {0.0, 0.0, 0.0},
+        true,
+        temp_fat,
+        temp_fat
+    }; 
 };
 
 #endif // SCENE_H

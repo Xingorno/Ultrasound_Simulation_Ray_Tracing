@@ -74,7 +74,7 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
     // Note: modify the refraction angle due to the strong refraction effect
     float theta_incidence_rad = acos(incidence_angle);
     float theta_refraction_rad = acos(refraction_angle);
-    refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*3/5 + theta_incidence_rad); 
+    refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*4/5 + theta_incidence_rad); 
     const bool total_internal_reflection = refraction_angle < 0;
     // Refraction direction
     
