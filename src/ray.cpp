@@ -10,44 +10,10 @@ using namespace std;
 float index_num= 1.0;
 ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3 & hit_point, const btVector3 & surface_normal, const mesh & collided_mesh)
 {
-    // btScalar incidence_angle = r.direction.dot(-surface_normal); // cos theta_1
 
     // TODO: this logic can probably be simpler
     const material * material_after_vascularities = nullptr;
-    // const auto & material_after_collision = [&r, &collided_mesh, &material_after_vascularities]() -> const material &
-    // {
-    //     if (r.media_outside) // if we are in a vessel
-    //     {
-    //         if (collided_mesh.is_vascular) // and we collided against a vessel (assuming same vessel, so we're getting out of it)
-    //         {
-    //             material_after_vascularities = nullptr;
-    //             return *r.media_outside; // we are going back to the stored media
-    //         }
-    //         // UNDONE
-    //         else // we are still inside the vessel but went out of the surrounding organ
-    //         {
-    //             // update the surrounding tissue
-    //             material_after_vascularities = r.media_outside == &collided_mesh.material_inside ? &collided_mesh.material_outside : &collided_mesh.material_inside;
-    //             // but we remain in the same media, i.e. the vessel
-    //             return r.media;
-    //         }
-    //     }
-    //     else // we are not in a vessel
-    //     {
-    //         if (collided_mesh.is_vascular) // and we collided with a vessel
-    //         {
-    //             // update the surrounding tissue
-    //             material_after_vascularities = &r.media; // we will come back to this tissue after getting out of the vessel
-    //             return collided_mesh.material_inside;
-    //         }
-    //         else // and we collided with a regular organ
-    //         {
-    //             material_after_vascularities = nullptr;
-    //             return &r.media == &collided_mesh.material_inside ? collided_mesh.material_outside : collided_mesh.material_inside;
-    //         }
-    //     }
-    // }();
-    // Given this 
+
     const auto & material_after_collision = collided_mesh.material_outside;
     
     //power-cosine distribution random normal
@@ -56,7 +22,6 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
     random_normal.safeNormalize();
     //Replace the surface normal with the new random normal
     btScalar incidence_angle = r.direction.dot(-random_normal); // cos theta_1
-    // Question: Why?
     if (incidence_angle < 0)
     {
         // incidence_angle = r.direction.dot(surface_normal);
@@ -74,7 +39,7 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
     // Note: modify the refraction angle due to the strong refraction effect
     float theta_incidence_rad = acos(incidence_angle);
     float theta_refraction_rad = acos(refraction_angle);
-    refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*4/5 + theta_incidence_rad); 
+    refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*2/5 + theta_incidence_rad); 
     const bool total_internal_reflection = refraction_angle < 0;
     // Refraction direction
     
@@ -201,7 +166,8 @@ float ray_physics::reflected_intensity(const float ray_intensity, const float in
     const auto specular_factor = std::pow(incidence_angle, colliding_media.specularity);
     const auto impedance_factor = std::pow(( (colliding_media.impedance - ray_media.impedance)
                                             /(colliding_media.impedance + ray_media.impedance)),2);
-    const auto intensity = std::pow(ray_intensity, small_reflections_enhancement_factor);
+    // const auto intensity = std::pow(ray_intensity, small_reflections_enhancement_factor);
+    const auto intensity = std::pow(1.0, small_reflections_enhancement_factor);
 
     //std::cout << media_1.impedance << " " << media_2.impedance << std::endl;
     //std::cout << ray_intensity << ", " << specular_factor << " * " << impedance_factor << " * " << intensity << " = " << std::abs(specular_factor * impedance_factor * intensity) << std::endl;

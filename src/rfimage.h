@@ -42,7 +42,12 @@ public:
 
         if (row < max_rows)
         {
-            intensities.at<float>(row, column) += echo;
+            float echo_previous = intensities.at<float>(row, column);
+            if (echo_previous < echo) // chose the max one as the pixel value
+            {
+                intensities.at<float>(row, column) = echo; 
+            } 
+            // intensities.at<float>(row, column) += echo;
         }
     }
 
@@ -126,23 +131,64 @@ public:
                 {
                     convolution += conv_axial_buffer.at<float>(row, col - half_lateral + kernel_i) * p.lateral_kernel[kernel_i];
                 }
-                intensities.at<float>(row,col) = convolution;
+                // scale image [-6 6] map to [0, 0.8]
+
+                if (convolution < -0.06)
+                {
+                    intensities.at<float>(row,col) = 0;
+                }
+                else
+                {
+                    intensities.at<float>(row, col) = (convolution + 0.06)/1.06;
+                }        
             }
         }
+
     }
 
     void postprocess()
     {
-        double min, max;
-        cv::minMaxLoc(intensities, &min, &max);
+        
 
         // cv::imwrite("prelog_rf.png", intensities);
         writeMatToFile(intensities, "prelog_rf.txt");
-
+        cv::Scalar temp = cv::mean(intensities);
+        double meanValue = temp.val[0];
         for (size_t i = 0; i < max_rows * columns; i++)
         {
-            intensities.at<float>(i) = std::log10(intensities.at<float>(i)+1)/std::log10(max+1);
+            
+            intensities.at<float>(i) = 20*std::log10(intensities.at<float>(i)+0.1 / (meanValue + 0.1));
+            // intensities.at<float>(i) = std::log10(intensities.at<float>(i)+1)/std::log10(max+1);
+
         }
+        double min, max;
+        cv::minMaxLoc(intensities, &min, &max);
+        for (size_t i = 0; i < max_rows * columns; i++)
+        {   
+            float temp = intensities.at<float>(i);
+            if (temp <= 0)
+            {
+                intensities.at<float>(i) = temp*(-0.5)/min + 0.5; 
+            }
+            else
+            {
+                intensities.at<float>(i) = temp * 0.5/max + 0.5;
+            }
+        }
+        double contrast = 0.4; // map [0,1] to [0,0.5] to [0,1]
+         for (size_t i = 0; i < max_rows * columns; i++)
+        {   
+            float temp = intensities.at<float>(i);
+            if (temp <= contrast)
+            {
+                intensities.at<float>(i) = (temp - 0.5)/0.5 + 1; 
+            }
+            else
+            {
+                intensities.at<float>(i) = 1;
+            }
+        }
+        
         writeMatToFile(intensities, "postlog_rf.txt");
         //cv::imwrite("postlog_rf.png", intensities);
         // apply scan conversion using preprocessed mapping
@@ -169,7 +215,7 @@ public:
 
     void clear()
     {
-        intensities.setTo(0.0f);
+        intensities.setTo(-2.0f); // Tricky point
     }
 
     void print(size_t column) const

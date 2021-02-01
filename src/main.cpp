@@ -30,7 +30,7 @@ constexpr centimeter_t ultrasound_depth = 15_cm; // [15cm -> μm]
 constexpr microsecond_t max_travel_time = microsecond_t(ultrasound_depth / speed_of_sound); // [μs]
 
 constexpr unsigned int resolution_axial = 145;//145; // [μm], from Burger13
-using psf_ = psf<7, 13, 7, resolution_axial>;
+using psf_ = psf<13, 7, 7, resolution_axial>;
 using volume_ = volume<256, resolution_axial>;
 using rf_image_ = rf_image<transducer_elements, max_travel_time.to<unsigned int>(), static_cast<unsigned int>(axial_resolution.to<float>()*1000.0f/*mm->μm*/)>;
 // using transducer_ = transducer<transducer_elements>;
@@ -77,7 +77,10 @@ int main(int argc, char** argv)
     static const volume_ texture_volume;
 
     // Step 2.3 point spread function
-    const psf_ psf { transducer_frequency, 0.05f, 0.2f, 0.1f };
+    const float var_x = 0.0210; //0.145*0.145
+    const float var_y = 0.09; // 0.3*0.3
+    const float var_z = 0.09;
+    const psf_ psf { transducer_frequency, var_x, var_y, var_z };
 
     // Step 2.4 radio frequency image
     rf_image_ rf_image { transducer_radius, transducer_amplitude };
@@ -99,7 +102,7 @@ int main(int argc, char** argv)
             std::array<units::angle::degree_t, 3> movedAngle = {degree_t((float)t_dir[0]+0), degree_t((float)t_dir[1] + 0), degree_t((float)t_dir[2]+0)};
             transducer_ transducer_temp(transducer_frequency, transducer_radius, transducer_element_separation,
                            btVector3(t_pos[0], t_pos[1], temp_pos), movedAngle);
-            rf_image.clear();
+            rf_image.clear(); // Default set to (-2)
 
             // auto rays = scene.cast_rays<transducer_elements>();
             auto rays = scene.cast_rays<samples_count, transducer_elements>(transducer_temp);
@@ -128,8 +131,9 @@ int main(int argc, char** argv)
                         {
                             float scattering = texture_volume.get_scattering(segment.media.mu1, segment.media.mu0, segment.media.sigma, point.x(), point.y(), point.z());
                             // float scattering = 0;
-                            float scatter = intensity * scattering + distr(generator);
+                            // float scatter = intensity * scattering + distr(generator);
                             // float scatter = intensity * scattering;
+                            float scatter = scattering;
                             // scatter = 0;
 
 
@@ -153,12 +157,8 @@ int main(int argc, char** argv)
             }
 
             rf_image.convolve(psf);
-
-            rf_image.envelope();
-
+            // rf_image.envelope();
             rf_image.postprocess();
-
-            // rf_image.save("Simulated_US.png");
             rf_image.show();
             
         }

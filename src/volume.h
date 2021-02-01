@@ -49,14 +49,14 @@ public:
 
         // UNDO: note resolution from the image displayed
         const unsigned int x = static_cast<unsigned int>(x_millis / resolution) % size;
-        const unsigned int y = static_cast<unsigned int>(y_millis / resolution) % size;
-        const unsigned int z = static_cast<unsigned int>(z_millis / resolution) % size;
+        const unsigned int y = static_cast<unsigned int>(y_millis / (resolution*2)) % size;
+        const unsigned int z = static_cast<unsigned int>(z_millis / (resolution*2)) % size;
 
         const auto & voxel = matrix[x][y][z];
 
         return voxel.scattering_probability >= scattering_density ?
-                    voxel.texture_noise * scattering_sigma + scattering_mu :
-                    0.0f; 
+                    0.01*(voxel.texture_noise * scattering_sigma + scattering_mu) :
+                    0.01*(scattering_density * scattering_sigma + scattering_mu); 
     }
 
 private:

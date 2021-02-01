@@ -38,9 +38,9 @@ public:
         var_y(var_y),
         var_z(var_z)
     {
-        constexpr auto half_axial = axial_size * resolution_micrometers / 1000.0f / 2.0f; // [mm]
-        constexpr auto half_lateral = lateral_size * resolution_micrometers / 1000.0f / 2.0f; // [mm]
-        constexpr auto half_elevation = elevation_size * resolution_micrometers / 1000.0f / 2.0f; // [mm]
+        constexpr auto half_axial = (axial_size -1) * resolution_micrometers / 1000.0f / 2.0f; // [mm]
+        constexpr auto half_lateral = (lateral_size-1) * resolution_micrometers*2 / 1000.0f / 2.0f; // [mm]
+        constexpr auto half_elevation = (elevation_size-1) * resolution_micrometers*2 / 1000.0f / 2.0f; // [mm]
         constexpr auto resolution = resolution_micrometers / 1000.0f; // [mm]
 
         // Fill axial kernel
@@ -53,13 +53,13 @@ public:
         // Fill lateral kernel
         for (size_t i = 0; i < lateral_size; i++)
         {
-            const float y = i * resolution - half_lateral; // [mm]
+            const float y = i * resolution*2 - half_lateral; // [mm]
             lateral_kernel[i] = lateral_function(y);
         }
 
         for (size_t i = 0; i < elevation_size; i++)
         {
-            const float z = i * resolution - half_elevation;
+            const float z = i * resolution*2 - half_elevation;
             elevation_kernel[i] = elevation_function(z);
         }
     }

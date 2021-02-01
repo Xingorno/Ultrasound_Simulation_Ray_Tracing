@@ -188,7 +188,7 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                                     
                                 }
 
-                                skip_scale = 1;
+                                skip_scale = 1; //Abdomen 2
                                 
                             }
                             else
