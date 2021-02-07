@@ -161,7 +161,7 @@ float ray_physics::reflected_intensity(const float ray_intensity, const float in
     // Eq. 10 in Burger13
     constexpr auto small_reflections_enhancement_factor = 0.1;
     // TODO: adjust parameter
-    constexpr auto custom_reflection_enhancement_factor = 0.2; // we made this up
+    constexpr auto custom_reflection_enhancement_factor = 0.1; // we made this up
 
     const auto specular_factor = std::pow(incidence_angle, colliding_media.specularity);
     const auto impedance_factor = std::pow(( (colliding_media.impedance - ray_media.impedance)

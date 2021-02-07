@@ -157,7 +157,7 @@ int main(int argc, char** argv)
             }
 
             rf_image.convolve(psf);
-            // rf_image.envelope();
+            rf_image.envelope();
             rf_image.postprocess();
             rf_image.show();
             

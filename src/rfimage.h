@@ -7,10 +7,19 @@
 #include <units/units.h>
 #include <iostream>
 #include <fstream>
-
+#include <fftw3.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <complex> 
 
 #include "psf.h"
 using namespace std;
+
+//macros for real and imaginary parts
+#define REAL 0
+#define IMAG 1
+
 /**
  * Radio-frequency image.
  *
@@ -69,37 +78,54 @@ public:
         // Then, recalculate the points between the peaks as the linear interpolation of the absolute values of those peaks.
         // This should work as a fast approximation of the hilbert transform over the rf signal.
 
-        for (size_t column = 0; column < columns; column++)
+        // for (size_t column = 0; column < columns; column++)
+        // {
+        //     bool ascending = intensities.at<float>(0, column) < intensities.at<float>(1, column);
+        //     size_t last_peak_pos = 0;
+        //     float last_peak = intensities.at<float>(last_peak_pos, column);
+        //     for (size_t i = 1; i < max_rows-1; i++)
+        //     {
+        //         if (intensities.at<float>(i, column) < intensities.at<float>(i+1, column))
+        //         {
+        //             ascending = true;
+        //         }
+        //         else if (ascending)
+        //         // if it was ascending and now descended, we found a concave point at i
+        //         {
+        //             ascending = false;
+        //             const float new_peak = std::abs(intensities.at<float>(i, column));
+
+        //             // lerp last_peak -> new_peak over last_peak_pos -> i (new_peak_pos)
+        //             for (size_t j = last_peak_pos; j < i; j++)
+        //             {
+        //                 const float alpha = (static_cast<float>(j) - static_cast<float>(last_peak_pos)) /
+        //                                     (static_cast<float>(i) - static_cast<float>(last_peak_pos));
+
+        //                 intensities.at<float>(j, column) = last_peak * (1-alpha) + new_peak * alpha;
+        //             }
+
+        //             last_peak_pos = i;
+        //             last_peak = new_peak;
+        //         }
+        //     }
+        // }
+        int N = intensities.rows;
+        fftw_complex y[N];
+        
+        for (int i = 0; i < intensities.cols; i++)
         {
-            bool ascending = intensities.at<float>(0, column) < intensities.at<float>(1, column);
-            size_t last_peak_pos = 0;
-            float last_peak = intensities.at<float>(last_peak_pos, column);
-            for (size_t i = 1; i < max_rows-1; i++)
+            cv::Mat in;
+            intensities.col(i).copyTo(in);
+            cv::Scalar meanValue = cv::mean(in);
+            in = in - meanValue;
+            hilbert(in, y);
+            for (int j = 0; j < N; j++)
             {
-                if (intensities.at<float>(i, column) < intensities.at<float>(i+1, column))
-                {
-                    ascending = true;
-                }
-                else if (ascending)
-                // if it was ascending and now descended, we found a concave point at i
-                {
-                    ascending = false;
-                    const float new_peak = std::abs(intensities.at<float>(i, column));
-
-                    // lerp last_peak -> new_peak over last_peak_pos -> i (new_peak_pos)
-                    for (size_t j = last_peak_pos; j < i; j++)
-                    {
-                        const float alpha = (static_cast<float>(j) - static_cast<float>(last_peak_pos)) /
-                                            (static_cast<float>(i) - static_cast<float>(last_peak_pos));
-
-                        intensities.at<float>(j, column) = last_peak * (1-alpha) + new_peak * alpha;
-                    }
-
-                    last_peak_pos = i;
-                    last_peak = new_peak;
-                }
+                complex<double> mycomplex(y[j][REAL], y[j][IMAG]);
+                intensities.at<float>(j,i) = meanValue.val[0] + abs(mycomplex);
             }
         }
+        
     }
 
     template <typename psf_>
@@ -248,6 +274,51 @@ public:
 
     fout.close();
     }
+
+    void hilbert(cv::Mat in, fftw_complex* out)
+    {
+        int N = intensities.rows;
+        // copy the data to the complex array
+        for (int i = 0; i < N; ++i) {
+            out[i][REAL] = in.at<float>(i,0);
+            out[i][IMAG] = 0;
+        }
+        // creat a DFT plan and execute it
+        fftw_plan plan = fftw_plan_dft_1d(N, out, out, FFTW_FORWARD, FFTW_ESTIMATE);
+        fftw_execute(plan);
+        // destroy a plan to prevent memory leak
+        fftw_destroy_plan(plan);
+        int hN = N >> 1; // half of the length (N/2)
+        int numRem = hN; // the number of remaining elements
+        // multiply the appropriate value by 2
+        //(those should multiplied by 1 are left intact because they wouldn't change)
+        for (int i = 1; i < hN; ++i) {
+            out[i][REAL] *= 2;
+            out[i][IMAG] *= 2;
+        }
+        // if the length is even, the number of the remaining elements decrease by 1
+        if (N % 2 == 0)
+            numRem--;
+        else if (N > 1) {
+            out[hN][REAL] *= 2;
+            out[hN][IMAG] *= 2;
+        }
+        // set the remaining value to 0
+        // (multiplying by 0 gives 0, so we don't care about the multiplicands)
+        memset(&out[hN + 1][REAL], 0, numRem * sizeof(fftw_complex));
+        // creat a IDFT plan and execute it
+        plan = fftw_plan_dft_1d(N, out, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+        fftw_execute(plan);
+        // do some cleaning
+        fftw_destroy_plan(plan);
+        fftw_cleanup();
+        // scale the IDFT output
+        for (int i = 0; i < N; ++i) {
+            out[i][REAL] /= N;
+            out[i][IMAG] /= N;
+        }
+
+    }   
 
 
 private:
