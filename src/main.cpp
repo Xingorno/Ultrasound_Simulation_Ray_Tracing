@@ -131,9 +131,9 @@ int main(int argc, char** argv)
                         {
                             float scattering = texture_volume.get_scattering(segment.media.mu1, segment.media.mu0, segment.media.sigma, point.x(), point.y(), point.z());
                             // float scattering = 0;
-                            // float scatter = intensity * scattering + distr(generator);
+                            float scatter = intensity * scattering + distr(generator);
                             // float scatter = intensity * scattering;
-                            float scatter = scattering;
+                            // float scatter = scattering + distr(generator);
                             // scatter = 0;
 
 

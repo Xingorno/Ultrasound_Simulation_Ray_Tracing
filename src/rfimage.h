@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <array>
 #include <units/units.h>
 #include <iostream>
@@ -122,6 +123,7 @@ public:
             for (int j = 0; j < N; j++)
             {
                 complex<double> mycomplex(y[j][REAL], y[j][IMAG]);
+                intensities.at<float>(j,i) = abs(mycomplex);
                 intensities.at<float>(j,i) = meanValue.val[0] + abs(mycomplex);
             }
         }
@@ -165,7 +167,8 @@ public:
                 }
                 else
                 {
-                    intensities.at<float>(row, col) = (convolution + 0.06)/1.06;
+                    float temp = (convolution + 0.06)/1.06;
+                    intensities.at<float>(row, col) = temp > 1 ? 0.8 : temp;
                 }        
             }
         }
@@ -183,7 +186,7 @@ public:
         for (size_t i = 0; i < max_rows * columns; i++)
         {
             
-            intensities.at<float>(i) = 20*std::log10(intensities.at<float>(i)+0.1 / (meanValue + 0.1));
+            intensities.at<float>(i) = 20*std::log10(intensities.at<float>(i)+0.5 / (meanValue + 0.5));
             // intensities.at<float>(i) = std::log10(intensities.at<float>(i)+1)/std::log10(max+1);
 
         }
@@ -201,19 +204,19 @@ public:
                 intensities.at<float>(i) = temp * 0.5/max + 0.5;
             }
         }
-        double contrast = 0.4; // map [0,1] to [0,0.5] to [0,1]
-         for (size_t i = 0; i < max_rows * columns; i++)
-        {   
-            float temp = intensities.at<float>(i);
-            if (temp <= contrast)
-            {
-                intensities.at<float>(i) = (temp - 0.5)/0.5 + 1; 
-            }
-            else
-            {
-                intensities.at<float>(i) = 1;
-            }
-        }
+        // double contrast = 0.4; // map [0,1] to [0,0.5] to [0,1]
+        // for (size_t i = 0; i < max_rows * columns; i++)
+        // {   
+        //     float temp = intensities.at<float>(i);
+        //     if (temp <= contrast)
+        //     {
+        //         intensities.at<float>(i) = (temp - 0.5)/0.5 + 1; 
+        //     }
+        //     else
+        //     {
+        //         intensities.at<float>(i) = 1;
+        //     }
+        // }
         
         writeMatToFile(intensities, "postlog_rf.txt");
         //cv::imwrite("postlog_rf.png", intensities);
@@ -221,6 +224,14 @@ public:
         constexpr float invalid_color = 0.0f;
         cv::remap(intensities, scan_converted, map_y, map_x, CV_INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(invalid_color)); 
         writeMatToFile(scan_converted, "Simulated_US.txt");
+        
+
+        // // Filter image
+        cv::Mat dst = scan_converted.clone();
+        int MAX_KERNEL_LENGTH = 5;
+        
+        bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
+        scan_converted = dst;
     }
 
     void save(const std::string & filename) const
