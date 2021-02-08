@@ -16,79 +16,87 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
 
     const auto & material_after_collision = collided_mesh.material_outside;
     
-    //power-cosine distribution random normal
-    float random_angle = power_cosine_variate(material_after_collision.roughness); // par: s shininess : ( 0 = diffuse; inf = specular)
-    btVector3 random_normal = random_unit_vector(surface_normal, random_angle);
-    random_normal.safeNormalize();
-    //Replace the surface normal with the new random normal
-    btScalar incidence_angle = r.direction.dot(-random_normal); // cos theta_1
-    if (incidence_angle < 0)
+    if (r.media.impedance == material_after_collision.impedance)
     {
-        // incidence_angle = r.direction.dot(surface_normal);
-        incidence_angle = r.direction.dot(random_normal);
-        random_normal = -random_normal;
+        ray refraction_ray { hit_point, r.direction, r.depth+1, material_after_collision, material_after_vascularities, r.intensity, r.frequency, r.distance_traveled, 0 };
+
+        ray reflection_ray { hit_point, -r.direction, r.depth+1, r.media, r.media_outside, 0, r.frequency, r.distance_traveled, 0 }; // set the reflection ray intensity equals to 0
+        
+        return { 0.4, reflection_ray, refraction_ray }; // set the relfected intensity equals to 0.4
     }
+    else
+    {
+        //power-cosine distribution random normal
+        float random_angle = power_cosine_variate(material_after_collision.roughness); // par: s shininess : ( 0 = diffuse; inf = specular)
+        btVector3 random_normal = random_unit_vector(surface_normal, random_angle);
+        random_normal.safeNormalize();
+        //Replace the surface normal with the new random normal
+        btScalar incidence_angle = r.direction.dot(-random_normal); // cos theta_1
+        if (incidence_angle < 0)
+        {
+            // incidence_angle = r.direction.dot(surface_normal);
+            incidence_angle = r.direction.dot(random_normal);
+            random_normal = -random_normal;
+        }
 
-    const float refr_ratio = r.media.impedance / material_after_collision.impedance;
+        const float refr_ratio = r.media.impedance / material_after_collision.impedance;
     
-    // Refraction angle
-    float refraction_angle = 1 - refr_ratio*refr_ratio * (1 - incidence_angle*incidence_angle);
+        // Refraction angle
+        float refraction_angle = 1 - refr_ratio*refr_ratio * (1 - incidence_angle*incidence_angle);
     
-    refraction_angle = std::sqrt(refraction_angle);
+        refraction_angle = std::sqrt(refraction_angle);
 
-    // Note: modify the refraction angle due to the strong refraction effect
-    float theta_incidence_rad = acos(incidence_angle);
-    float theta_refraction_rad = acos(refraction_angle);
-    refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*2/5 + theta_incidence_rad); 
-    const bool total_internal_reflection = refraction_angle < 0;
-    // Refraction direction
+        // Note: modify the refraction angle due to the strong refraction effect
+        float theta_incidence_rad = acos(incidence_angle);
+        float theta_refraction_rad = acos(refraction_angle);
+        refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*2/5 + theta_incidence_rad); 
+        const bool total_internal_reflection = refraction_angle < 0;
+        // Refraction direction
     
-    // const auto refraction_direction = snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
-    const auto refraction_direction = total_internal_reflection ? r.direction.cross(random_normal) : snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
+        // const auto refraction_direction = snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
+        const auto refraction_direction = total_internal_reflection ? r.direction.cross(random_normal) : snells_law(r.direction, random_normal, incidence_angle, refraction_angle, refr_ratio);
     
-    // /* Orthognal incidence */
-    // float refraction_angle = incidence_angle;
-    // const bool total_internal_reflection = refraction_angle < 0;
-    // const auto refraction_direction = r.direction;
+        // /* Orthognal incidence */
+        // float refraction_angle = incidence_angle;
+        // const bool total_internal_reflection = refraction_angle < 0;
+        // const auto refraction_direction = r.direction;
     
-    // Reflection direction
+        // Reflection direction
     
-    btVector3 reflection_direction1 = r.direction + 2*incidence_angle * random_normal;
-    const btVector3 reflection_direction = reflection_direction1.safeNormalize();
+        btVector3 reflection_direction1 = r.direction + 2*incidence_angle * random_normal;
+        const btVector3 reflection_direction = reflection_direction1.safeNormalize();
 
 
 
-    // Reflection intensity
-    const auto intensity_refl = total_internal_reflection ?
-                                    r.intensity :
-                                    reflection_intensity(r.intensity,
-                                        r.media.impedance, incidence_angle,
-                                        material_after_collision.impedance, refraction_angle);
+        // Reflection intensity
+        const auto intensity_refl = total_internal_reflection ?
+                                        r.intensity :
+                                        reflection_intensity(r.intensity,
+                                            r.media.impedance, incidence_angle,
+                                            material_after_collision.impedance, refraction_angle);
     
-    // Refraction intensity
-    const auto intensity_refr = r.intensity - intensity_refl;
+        // Refraction intensity
+        const auto intensity_refr = r.intensity - intensity_refl;
 
-    // Eq. 10 in Burger13
-    const float back_to_transducer_intensity = reflected_intensity(r.intensity, incidence_angle, r.media, material_after_collision);
+        // Eq. 10 in Burger13
+        const float back_to_transducer_intensity = reflected_intensity(r.intensity, incidence_angle, r.media, material_after_collision);
 
-    // Add two more rays to the stack
+        // Add two more rays to the stack
 
-    // units::length::millimeter_t temp = segment_length_in_mm(r.from, hit_point);
-    // units::length::millimeter_t distanceTraved_new = temp + r.distance_traveled;
+        // units::length::millimeter_t temp = segment_length_in_mm(r.from, hit_point);
+        // units::length::millimeter_t distanceTraved_new = temp + r.distance_traveled;
 
-    // ray refraction_ray { hit_point, refraction_direction, r.depth+1, material_after_collision, material_after_vascularities, intensity_refr > ray::intensity_epsilon ? intensity_refr : 0.0f, r.frequency, distanceTraved_new, 0 };
+        // ray refraction_ray { hit_point, refraction_direction, r.depth+1, material_after_collision, material_after_vascularities, intensity_refr > ray::intensity_epsilon ? intensity_refr : 0.0f, r.frequency, distanceTraved_new, 0 };
 
-    // ray reflection_ray { hit_point, reflection_direction, r.depth+1, r.media, r.media_outside, intensity_refl > ray::intensity_epsilon ? intensity_refl : 0.0f, r.frequency, distanceTraved_new, 0 };
+        // ray reflection_ray { hit_point, reflection_direction, r.depth+1, r.media, r.media_outside, intensity_refl > ray::intensity_epsilon ? intensity_refl : 0.0f, r.frequency, distanceTraved_new, 0 };
 
-    ray refraction_ray { hit_point, refraction_direction, r.depth+1, material_after_collision, material_after_vascularities, intensity_refr > ray::intensity_epsilon ? intensity_refr : 0.0f, r.frequency, r.distance_traveled, 0 };
+        ray refraction_ray { hit_point, refraction_direction, r.depth+1, material_after_collision, material_after_vascularities, intensity_refr > ray::intensity_epsilon ? intensity_refr : 0.0f, r.frequency, r.distance_traveled, 0 };
 
-    ray reflection_ray { hit_point, reflection_direction, r.depth+1, r.media, r.media_outside, intensity_refl > ray::intensity_epsilon ? intensity_refl : 0.0f, r.frequency, r.distance_traveled, 0 };
-    // writeTextToFile(index_num, r.direction.safeNorm(), "direction_norm2.txt");
-    // writeTextToFile(index_num, random_normal.safeNorm(), "random_norm2.txt");
-    // writeTextToFile(index_num, refraction_angle, "refraction_angle_snell2.txt");
-    // writeTextToFile(index_num, incidence_angle, "reflection_angle_snell2.txt");
-    // index_num++;
-    return { back_to_transducer_intensity, reflection_ray, refraction_ray };
+        ray reflection_ray { hit_point, reflection_direction, r.depth+1, r.media, r.media_outside, intensity_refl > ray::intensity_epsilon ? intensity_refl : 0.0f, r.frequency, r.distance_traveled, 0 };
+ 
+        // index_num++;
+        return { back_to_transducer_intensity, reflection_ray, refraction_ray };
+    }
     
 }
 

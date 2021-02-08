@@ -229,7 +229,6 @@ public:
         // // Filter image
         cv::Mat dst = scan_converted.clone();
         int MAX_KERNEL_LENGTH = 5;
-        
         bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
         scan_converted = dst;
     }

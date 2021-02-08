@@ -168,7 +168,7 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                             // float distance = closestResults.m_hitPointWorld.distance(closestResults1.m_hitPointWorld);
                             float distance = (closestResults.m_hitPointWorld[0] - closestResults1.m_hitPointWorld[0])*(closestResults.m_hitPointWorld[0] - closestResults1.m_hitPointWorld[0]) + (closestResults.m_hitPointWorld[1] - closestResults1.m_hitPointWorld[1]) * (closestResults.m_hitPointWorld[1] - closestResults1.m_hitPointWorld[1]) + (closestResults.m_hitPointWorld[2] - closestResults1.m_hitPointWorld[2]) * (closestResults.m_hitPointWorld[2] - closestResults1.m_hitPointWorld[2]);
                             distance = sqrt(distance);
-                            if ( distance > 0.2 && distance < 1) // Abdomen: 2 
+                            if ( distance > 0.2 && distance < 4) // Abdomen: 2 
                             {   
                                 organ_second_hit = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
                                 organ_first_hit = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
@@ -188,7 +188,7 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                                     
                                 }
 
-                                skip_scale = 1; //Abdomen 2
+                                skip_scale = distance + 0.1; //Abdomen 2
                                 
                             }
                             else
