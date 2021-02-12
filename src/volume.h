@@ -55,8 +55,8 @@ public:
         const auto & voxel = matrix[x][y][z];
 
         return voxel.scattering_probability >= scattering_density ?
-                    0.01*(voxel.texture_noise * scattering_sigma + scattering_mu) :
-                    0.01*(scattering_density * scattering_sigma + scattering_mu); 
+                    voxel.texture_noise * scattering_sigma + scattering_mu :
+                    0.0; 
     }
 
 private:

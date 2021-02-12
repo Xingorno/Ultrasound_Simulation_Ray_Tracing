@@ -79,60 +79,69 @@ public:
         // Then, recalculate the points between the peaks as the linear interpolation of the absolute values of those peaks.
         // This should work as a fast approximation of the hilbert transform over the rf signal.
 
-        // for (size_t column = 0; column < columns; column++)
-        // {
-        //     bool ascending = intensities.at<float>(0, column) < intensities.at<float>(1, column);
-        //     size_t last_peak_pos = 0;
-        //     float last_peak = intensities.at<float>(last_peak_pos, column);
-        //     for (size_t i = 1; i < max_rows-1; i++)
-        //     {
-        //         if (intensities.at<float>(i, column) < intensities.at<float>(i+1, column))
-        //         {
-        //             ascending = true;
-        //         }
-        //         else if (ascending)
-        //         // if it was ascending and now descended, we found a concave point at i
-        //         {
-        //             ascending = false;
-        //             const float new_peak = std::abs(intensities.at<float>(i, column));
-
-        //             // lerp last_peak -> new_peak over last_peak_pos -> i (new_peak_pos)
-        //             for (size_t j = last_peak_pos; j < i; j++)
-        //             {
-        //                 const float alpha = (static_cast<float>(j) - static_cast<float>(last_peak_pos)) /
-        //                                     (static_cast<float>(i) - static_cast<float>(last_peak_pos));
-
-        //                 intensities.at<float>(j, column) = last_peak * (1-alpha) + new_peak * alpha;
-        //             }
-
-        //             last_peak_pos = i;
-        //             last_peak = new_peak;
-        //         }
-        //     }
-        // }
-        int N = intensities.rows;
-        fftw_complex y[N];
+        // Full rectification
         
-        for (int i = 0; i < intensities.cols; i++)
+        intensities = cv::abs(intensities);
+        for (size_t column = 0; column < columns; column++)
         {
-            cv::Mat in;
-            intensities.col(i).copyTo(in);
-            cv::Scalar meanValue = cv::mean(in);
-            in = in - meanValue;
-            hilbert(in, y);
-            for (int j = 0; j < N; j++)
+            bool ascending = intensities.at<float>(0, column) < intensities.at<float>(1, column);
+            size_t last_peak_pos = 0;
+            float last_peak = intensities.at<float>(last_peak_pos, column);
+            for (size_t i = 1; i < max_rows-1; i++)
             {
-                complex<double> mycomplex(y[j][REAL], y[j][IMAG]);
-                intensities.at<float>(j,i) = abs(mycomplex);
-                intensities.at<float>(j,i) = meanValue.val[0] + abs(mycomplex);
+                if (intensities.at<float>(i, column) < intensities.at<float>(i+1, column))
+                {
+                    ascending = true;
+                }
+                else if (ascending)
+                // if it was ascending and now descended, we found a concave point at i
+                {
+                    ascending = false;
+                    const float new_peak = std::abs(intensities.at<float>(i, column));
+
+                    // lerp last_peak -> new_peak over last_peak_pos -> i (new_peak_pos)
+                    for (size_t j = last_peak_pos; j < i; j++)
+                    {
+                        const float alpha = (static_cast<float>(j) - static_cast<float>(last_peak_pos)) /
+                                            (static_cast<float>(i) - static_cast<float>(last_peak_pos));
+
+                        intensities.at<float>(j, column) = last_peak * (1-alpha) + new_peak * alpha;
+                    }
+
+                    last_peak_pos = i;
+                    last_peak = new_peak;
+                }
             }
         }
+
+        
+
+
+        // // Extracting Envelope
+        // int N = intensities.rows;
+        // fftw_complex y[N];
+        
+        // for (int i = 0; i < intensities.cols; i++)
+        // {
+        //     cv::Mat in;
+        //     intensities.col(i).copyTo(in);
+        //     // cv::Scalar meanValue = cv::mean(in);
+        //     // in = in - meanValue;
+        //     hilbert(in, y);
+        //     for (int j = 0; j < N; j++)
+        //     {
+        //         complex<double> mycomplex(y[j][REAL], y[j][IMAG]);
+        //         intensities.at<float>(j,i) = abs(mycomplex);
+        //         // intensities.at<float>(j,i) = meanValue.val[0] + abs(mycomplex);
+        //     }
+        // }
         
     }
 
     template <typename psf_>
     void convolve(const psf_ & p)
-    {
+    {   
+        writeMatToFile(intensities, "Scatter_Intensity.txt");
         // Convolve using only axial kernel and store in intermediate buffer
         int half_axial = p.get_axial_size()/2;
         for (int col = 0; col < intensities.cols; col++) //each column is a different TE
@@ -145,6 +154,14 @@ public:
                     convolution += intensities.at<float>(row - half_axial+ kernel_i, col) * p.axial_kernel[kernel_i];
                 }
                 conv_axial_buffer.at<float>(row,col) = convolution;
+            }
+            for (int row = 0; row < half_axial; row++)
+            {
+                conv_axial_buffer.at<float>(row, col) = conv_axial_buffer.at<float>(half_axial, col);
+            }
+            for (int row =  intensities.rows - half_axial; row < intensities.rows; row++)
+            {
+                conv_axial_buffer.at<float>(row, col) = conv_axial_buffer.at<float>(intensities.rows-half_axial-1, col);
             }
         }
 
@@ -160,19 +177,19 @@ public:
                     convolution += conv_axial_buffer.at<float>(row, col - half_lateral + kernel_i) * p.lateral_kernel[kernel_i];
                 }
                 // scale image [-6 6] map to [0, 0.8]
-
-                if (convolution < -0.06)
-                {
-                    intensities.at<float>(row,col) = 0;
-                }
-                else
-                {
-                    float temp = (convolution + 0.06)/1.06;
-                    intensities.at<float>(row, col) = temp > 1 ? 0.8 : temp;
-                }        
+                intensities.at<float>(row, col) = convolution;
+                
+            }
+            for (int col = 0; col < half_lateral; col++)
+            {
+                intensities.at<float>(row, col) = intensities.at<float>(row, half_lateral);
+            }
+            for (int col = conv_axial_buffer.cols-half_lateral; col < conv_axial_buffer.cols; col++)
+            {
+                intensities.at<float>(row, col) = intensities.at<float>(row, conv_axial_buffer.cols - half_lateral-1);
             }
         }
-
+        writeMatToFile(intensities, "AfterConvolution.txt");
     }
 
     void postprocess()
@@ -181,43 +198,26 @@ public:
 
         // cv::imwrite("prelog_rf.png", intensities);
         writeMatToFile(intensities, "prelog_rf.txt");
-        cv::Scalar temp = cv::mean(intensities);
-        double meanValue = temp.val[0];
+        double min, max;
+        cv::minMaxLoc(intensities, &min, &max);
+        
+        // cv::Scalar temp = cv::mean(intensities);
+        // double meanValue = temp.val[0];
         for (size_t i = 0; i < max_rows * columns; i++)
         {
             
-            intensities.at<float>(i) = 20*std::log10(intensities.at<float>(i)+0.5 / (meanValue + 0.5));
+            intensities.at<float>(i) = 20*std::log10(intensities.at<float>(i) / max );
             // intensities.at<float>(i) = std::log10(intensities.at<float>(i)+1)/std::log10(max+1);
 
         }
-        double min, max;
-        cv::minMaxLoc(intensities, &min, &max);
+
         for (size_t i = 0; i < max_rows * columns; i++)
         {   
             float temp = intensities.at<float>(i);
-            if (temp <= 0)
-            {
-                intensities.at<float>(i) = temp*(-0.5)/min + 0.5; 
-            }
-            else
-            {
-                intensities.at<float>(i) = temp * 0.5/max + 0.5;
-            }
+            intensities.at<float>(i) = 127/60*(temp + 60);
+            // intensities.at<float>(i) = intensities.at<float>(i)/255;
         }
-        // double contrast = 0.4; // map [0,1] to [0,0.5] to [0,1]
-        // for (size_t i = 0; i < max_rows * columns; i++)
-        // {   
-        //     float temp = intensities.at<float>(i);
-        //     if (temp <= contrast)
-        //     {
-        //         intensities.at<float>(i) = (temp - 0.5)/0.5 + 1; 
-        //     }
-        //     else
-        //     {
-        //         intensities.at<float>(i) = 1;
-        //     }
-        // }
-        
+
         writeMatToFile(intensities, "postlog_rf.txt");
         //cv::imwrite("postlog_rf.png", intensities);
         // apply scan conversion using preprocessed mapping
@@ -226,11 +226,11 @@ public:
         writeMatToFile(scan_converted, "Simulated_US.txt");
         
 
-        // // Filter image
-        cv::Mat dst = scan_converted.clone();
-        int MAX_KERNEL_LENGTH = 5;
-        bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
-        scan_converted = dst;
+        // // // Filter image
+        // cv::Mat dst = scan_converted.clone();
+        // int MAX_KERNEL_LENGTH = 5;
+        // bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
+        // scan_converted = dst;
     }
 
     void save(const std::string & filename) const
@@ -376,6 +376,7 @@ private:
 
     cv::Mat intensities;
     cv::Mat scan_converted;// note: scan_converted is the image we usually see from US machine
+    // cv::Mat simulated_US;
     cv::Mat conv_axial_buffer;
 
     // Mapping used for scan conversion

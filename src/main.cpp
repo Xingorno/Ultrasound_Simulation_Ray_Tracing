@@ -30,8 +30,8 @@ constexpr centimeter_t ultrasound_depth = 15_cm; // [15cm -> μm]
 constexpr microsecond_t max_travel_time = microsecond_t(ultrasound_depth / speed_of_sound); // [μs]
 
 constexpr unsigned int resolution_axial = 145;//145; // [μm], from Burger13
-using psf_ = psf<13, 7, 7, resolution_axial>;
-using volume_ = volume<256, resolution_axial>;
+using psf_ = psf<17, 17, 17, 100>;
+using volume_ = volume<256, 100>;
 using rf_image_ = rf_image<transducer_elements, max_travel_time.to<unsigned int>(), static_cast<unsigned int>(axial_resolution.to<float>()*1000.0f/*mm->μm*/)>;
 // using transducer_ = transducer<transducer_elements>;
 using transducer_ = transducer<transducer_elements, samples_count>;
@@ -77,9 +77,9 @@ int main(int argc, char** argv)
     static const volume_ texture_volume;
 
     // Step 2.3 point spread function
-    const float var_x = 0.0210; //0.145*0.145
-    const float var_y = 0.09; // 0.3*0.3
-    const float var_z = 0.09;
+    const float var_x = 0.1; //0.145*0.145
+    const float var_y = 0.2; // 0.3*0.3
+    const float var_z = 0.2;
     const psf_ psf { transducer_frequency, var_x, var_y, var_z };
 
     // Step 2.4 radio frequency image
@@ -131,9 +131,9 @@ int main(int argc, char** argv)
                         {
                             float scattering = texture_volume.get_scattering(segment.media.mu1, segment.media.mu0, segment.media.sigma, point.x(), point.y(), point.z());
                             // float scattering = 0;
-                            float scatter = intensity * scattering + distr(generator);
+                            // float scatter = intensity * scattering + distr(generator);
                             // float scatter = intensity * scattering;
-                            // float scatter = scattering + distr(generator);
+                            float scatter = scattering;
                             // scatter = 0;
 
 
@@ -146,10 +146,10 @@ int main(int argc, char** argv)
                             constexpr auto k = 0.1f;
                             intensity *= std::exp(-segment.attenuation * axial_resolution.to<float>()*0.1f * transducer_frequency * k);
                         }
-
+                        
                         // Add reflection term, i.e. intensity directly reflected back to the transducer. See Burger13, Eq. 10.
                         // rf_image.add_echo(ray_i, segment.reflected_intensity, starting_micros + time_step * (steps-1));
-                        rf_image.add_echo(ray_i, (segment.reflected_intensity), starting_micros + time_step * (steps-1));
+                        // rf_image.add_echo(ray_i, (segment.reflected_intensity), starting_micros + time_step * (steps-1));
                     }
                     
                 }    
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
             rf_image.convolve(psf);
             rf_image.envelope();
             rf_image.postprocess();
-            rf_image.show();
+            // rf_image.show();
             
         }
     }
