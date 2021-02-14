@@ -9,7 +9,7 @@
       "attenuation": 0.0002,
       "mu0": 1,
       "mu1": -100,
-      "sigma": 0.1,
+      "sigma": 0.2,
       "specularity": 1.0,
       "roughness": 10000
     },
@@ -48,9 +48,9 @@
       "name": "LIVER",
       "impedance": 1.65,
       "attenuation": 0.4,
-      "mu0": 50,
+      "mu0": 20,
       "mu1": -100,
-      "sigma": 2,
+      "sigma": 5,
       "specularity": 1.0,
       "roughness": 1000000
     },
@@ -130,7 +130,7 @@
       "attenuation": 0.2,
       "mu0": 10,
       "mu1": -100,
-      "sigma": 0.5,
+      "sigma": 1,
       "specularity": 1.0,
       "roughness": 10000
     },
@@ -138,9 +138,9 @@
       "name": "SKIN",
       "impedance": 1.71,
       "attenuation": 0.2,
-      "mu0": 20,
+      "mu0": 10,
       "mu1": -100,
-      "sigma": 2,
+      "sigma": 4,
       "specularity": 1.0,
       "roughness": 10000
     }

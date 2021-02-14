@@ -78,7 +78,7 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
             }
         }
         // size_t ray_i = 473;
-        // size_t ray_i = 512;
+        // size_t ray_i = 600;
         for (size_t ray_i = 0; ray_i < ray_count; ray_i++)
         {
             // auto & segments_vector = segments[ray_i];
@@ -159,7 +159,16 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                         // mesh* organ1;
                         if (!closestResults1.hasHit())
                         {
-                            organ = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                            organ_end = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
+                            if (organ == organ_end)
+                            {
+                                organ = &organ_temp;
+                            }
+                            else
+                            {
+                                organ = organ_end;
+                            }
+                            
                             skip_scale = 0.1;
                             
                         }

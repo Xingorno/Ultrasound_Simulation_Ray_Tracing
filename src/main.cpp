@@ -134,7 +134,7 @@ int main(int argc, char** argv)
                             // float scatter = intensity * scattering + distr(generator);
                             float scatter = intensity * scattering;
                             // float scatter = scattering;
-                            // scatter = 0;
+                            // scatter = 0.000000;
 
 
                             rf_image.add_echo(ray_i, scatter, time_elapsed);
@@ -143,8 +143,8 @@ int main(int argc, char** argv)
                             point += delta_step;
                             time_elapsed = time_elapsed + time_step;
 
-                            constexpr auto k = 0.1f;
-                            intensity *= std::exp(-segment.attenuation * axial_resolution.to<float>()*0.1f * transducer_frequency * k);
+                            constexpr auto k = 0.17f;
+                            intensity *= std::exp(-segment.attenuation * axial_resolution.to<float>()*0.1f * transducer_frequency*k);
                         }
 
                         // Add reflection term, i.e. intensity directly reflected back to the transducer. See Burger13, Eq. 10.
@@ -175,16 +175,18 @@ int main(int argc, char** argv)
 
                         // Add reflection term, i.e. intensity directly reflected back to the transducer. See Burger13, Eq. 10.
                         // rf_image.add_echo(ray_i, segment.reflected_intensity, starting_micros + time_step * (steps-1));
-                        rf_image.add_echo(ray_i, (segment.reflected_intensity * (1000)), starting_micros + time_step * (steps-1));
+                        rf_image.add_echo(ray_i, (segment.reflected_intensity * (1000)), starting_micros + time_step * steps);
                     }
                     
                 }    
 
             }
 
+
+
             rf_image.envelope();
             rf_image.postprocess();
-            // rf_image.show();
+            rf_image.show();
             
         }
     }

@@ -85,16 +85,17 @@ protected:
     mesh* organ;
     mesh* organ_first_hit;
     mesh* organ_second_hit;
+    mesh* organ_end;
     std::array<units::angle::degree_t, 3> transducer_dir;
 
     clock_t frame_start;
     const material temp_fat
     {
-        1.48, //"impedance"
-        0.0002, //"attenuation"
-        0.001, //"mu0"
-        0.5, //"mu1"
-        0.05, //"sigma"
+        1.64, //"impedance"
+        0.5, //"attenuation"
+        1, //"mu0"
+        -100, //"mu1"
+        1.5, //"sigma"
         1.0, //"specularity"
         10000 //"roughness"
     };

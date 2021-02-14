@@ -8,7 +8,7 @@
 using namespace ray_physics;
 using namespace std;
 float index_num= 1.0;
-ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3 & hit_point, const btVector3 & surface_normal, const mesh & collided_mesh)
+ray_physics::hit_result ray_physics::hit_boundary(ray & r, const btVector3 & hit_point, const btVector3 & surface_normal, const mesh & collided_mesh)
 {
 
     // TODO: this logic can probably be simpler
@@ -74,7 +74,12 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
                                         reflection_intensity(r.intensity,
                                             r.media.impedance, incidence_angle,
                                             material_after_collision.impedance, refraction_angle);
-    
+        // // attenuation intensity
+        // constexpr auto k = 0.1f;
+        // units::length::millimeter_t distance = segment_length_in_mm(r.from, hit_point);
+        
+        // r.intensity = r.intensity * std::exp(-r.media.attenuation * distance.to<float>() *0.1* 4.5 *k);
+        
         // Refraction intensity
         const auto intensity_refr = r.intensity - intensity_refl;
 
@@ -83,7 +88,7 @@ ray_physics::hit_result ray_physics::hit_boundary(const ray & r, const btVector3
 
         // Add two more rays to the stack
 
-        // units::length::millimeter_t temp = segment_length_in_mm(r.from, hit_point);
+        
         // units::length::millimeter_t distanceTraved_new = temp + r.distance_traveled;
 
         // ray refraction_ray { hit_point, refraction_direction, r.depth+1, material_after_collision, material_after_vascularities, intensity_refr > ray::intensity_epsilon ? intensity_refr : 0.0f, r.frequency, distanceTraved_new, 0 };

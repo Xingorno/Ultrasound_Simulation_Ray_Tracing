@@ -84,6 +84,14 @@ public:
         // Full rectification
         
         intensities = cv::abs(intensities);
+
+        // cv::Mat dst = intensities.clone();
+        // int MAX_KERNEL_LENGTH = 3;
+        // blur ( intensities, dst, cv::Size(MAX_KERNEL_LENGTH, MAX_KERNEL_LENGTH), cv::Point(-1,-1)  );
+        // // medianBlur(intensities, dst, MAX_KERNEL_LENGTH);
+        // // bilateralFilter ( intensities, dst, MAX_KERNEL_LENGTH, 2, 2 );
+        // intensities = dst;
+
         for (size_t column = 0; column < columns; column++)
         {
             bool ascending = intensities.at<float>(0, column) < intensities.at<float>(1, column);
@@ -236,11 +244,12 @@ public:
         
         
 
-        // // // Filter image
-        cv::Mat dst = scan_converted.clone();
-        int MAX_KERNEL_LENGTH = 5;
-        bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
-        scan_converted = dst;
+        // // // // Filter image
+        // cv::Mat dst = scan_converted.clone();
+        // int MAX_KERNEL_LENGTH = 5;
+        // bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
+      
+        // scan_converted = dst;
 
         writeMatToFile(scan_converted, "Simulated_US.txt");
     }
@@ -256,7 +265,7 @@ public:
         //cv::imshow("Display window", image );
 
         cv::namedWindow("Scan Converted", cv::WINDOW_AUTOSIZE );
-        cv::imshow("Scan Converted", scan_converted );
+        cv::imshow("Scan Converted", scan_converted/255 );
 
         cv::waitKey(16);
     }

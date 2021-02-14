@@ -128,6 +128,7 @@ burgercpp: /usr/local/lib/libBullet3Common.so
 burgercpp: /usr/local/lib/libBulletDynamics.so
 burgercpp: /usr/local/lib/libBulletCollision.so
 burgercpp: /usr/local/lib/libLinearMath.so
+burgercpp: /usr/local/lib/libfftw3.a
 burgercpp: /usr/local/lib/libopencv_dnn.so.3.4.12
 burgercpp: /usr/local/lib/libopencv_highgui.so.3.4.12
 burgercpp: /usr/local/lib/libopencv_ml.so.3.4.12
