@@ -30,7 +30,7 @@ constexpr centimeter_t ultrasound_depth = 15_cm; // [15cm -> μm]
 constexpr microsecond_t max_travel_time = microsecond_t(ultrasound_depth / speed_of_sound); // [μs]
 
 constexpr unsigned int resolution_axial = 145;//145; // [μm], from Burger13
-using psf_ = psf<17, 17, 17, 100>;
+using psf_ = psf<11, 11, 11, 100>;
 using volume_ = volume<256, 100>;
 using rf_image_ = rf_image<transducer_elements, max_travel_time.to<unsigned int>(), static_cast<unsigned int>(axial_resolution.to<float>()*1000.0f/*mm->μm*/)>;
 // using transducer_ = transducer<transducer_elements>;
@@ -132,8 +132,8 @@ int main(int argc, char** argv)
                             float scattering = texture_volume.get_scattering(segment.media.mu1, segment.media.mu0, segment.media.sigma, point.x(), point.y(), point.z());
                             // float scattering = 0;
                             // float scatter = intensity * scattering + distr(generator);
-                            // float scatter = intensity * scattering;
-                            float scatter = scattering;
+                            float scatter = intensity * scattering;
+                            // float scatter = scattering;
                             // scatter = 0;
 
 
@@ -146,10 +146,10 @@ int main(int argc, char** argv)
                             constexpr auto k = 0.1f;
                             intensity *= std::exp(-segment.attenuation * axial_resolution.to<float>()*0.1f * transducer_frequency * k);
                         }
-                        
+
                         // Add reflection term, i.e. intensity directly reflected back to the transducer. See Burger13, Eq. 10.
                         // rf_image.add_echo(ray_i, segment.reflected_intensity, starting_micros + time_step * (steps-1));
-                        // rf_image.add_echo(ray_i, (segment.reflected_intensity), starting_micros + time_step * (steps-1));
+                        // rf_image.add_echo(ray_i, (segment.reflected_intensity*(-10000)), starting_micros + time_step * (steps-1));
                     }
                     
                 }    
@@ -157,6 +157,31 @@ int main(int argc, char** argv)
             }
 
             rf_image.convolve(psf);
+
+            for (unsigned int ray_i = 0; ray_i < rays.size(); ray_i++)
+            {
+                const auto & ray = rays[ray_i];
+                for (unsigned int sample_i = 0; sample_i < samples_count; sample_i++)
+                {
+                    const auto & sample = ray[sample_i];
+                    int num_segment = sample.size();
+                    // for (auto & segment : ray)
+                    for(auto & segment: sample)
+                    {
+                        const auto starting_micros = rf_image.micros_traveled(segment.distance_traveled /*mm -> μm*/);
+                        const auto distance = scene.distance(segment.from, segment.to); // [mm]
+                        const auto steps = distance / axial_resolution;
+                        const auto time_step = rf_image.micros_traveled(axial_resolution); // [μs]
+
+                        // Add reflection term, i.e. intensity directly reflected back to the transducer. See Burger13, Eq. 10.
+                        // rf_image.add_echo(ray_i, segment.reflected_intensity, starting_micros + time_step * (steps-1));
+                        rf_image.add_echo(ray_i, (segment.reflected_intensity * (1000)), starting_micros + time_step * (steps-1));
+                    }
+                    
+                }    
+
+            }
+
             rf_image.envelope();
             rf_image.postprocess();
             // rf_image.show();

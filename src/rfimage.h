@@ -13,14 +13,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <complex> 
+#include <math.h>
 
 #include "psf.h"
+
 using namespace std;
 
 //macros for real and imaginary parts
 #define REAL 0
 #define IMAG 1
-
+#define PI 3.14159265
 /**
  * Radio-frequency image.
  *
@@ -102,9 +104,9 @@ public:
                     // lerp last_peak -> new_peak over last_peak_pos -> i (new_peak_pos)
                     for (size_t j = last_peak_pos; j < i; j++)
                     {
-                        const float alpha = (static_cast<float>(j) - static_cast<float>(last_peak_pos)) /
+                        float alpha = (static_cast<float>(j) - static_cast<float>(last_peak_pos)) /
                                             (static_cast<float>(i) - static_cast<float>(last_peak_pos));
-
+                        alpha = (1 - cos(alpha*PI))/2;
                         intensities.at<float>(j, column) = last_peak * (1-alpha) + new_peak * alpha;
                     }
 
@@ -177,8 +179,15 @@ public:
                     convolution += conv_axial_buffer.at<float>(row, col - half_lateral + kernel_i) * p.lateral_kernel[kernel_i];
                 }
                 // scale image [-6 6] map to [0, 0.8]
-                intensities.at<float>(row, col) = convolution;
-                
+                // intensities.at<float>(row, col) = convolution;
+                if (convolution < -30 || convolution > 30)
+                {
+                    intensities.at<float>(row, col) = intensities.at<float>(row-1, col);
+                }
+                else
+                {
+                    intensities.at<float>(row, col) = convolution;
+                }
             }
             for (int col = 0; col < half_lateral; col++)
             {
@@ -198,15 +207,15 @@ public:
 
         // cv::imwrite("prelog_rf.png", intensities);
         writeMatToFile(intensities, "prelog_rf.txt");
-        double min, max;
-        cv::minMaxLoc(intensities, &min, &max);
+        // double min, max;
+        // cv::minMaxLoc(intensities, &min, &max);
         
         // cv::Scalar temp = cv::mean(intensities);
         // double meanValue = temp.val[0];
         for (size_t i = 0; i < max_rows * columns; i++)
         {
-            
-            intensities.at<float>(i) = 20*std::log10(intensities.at<float>(i) / max );
+            float temp = intensities.at<float>(i) /1000;
+            intensities.at<float>(i) = 20*std::log10(temp + 0.001);
             // intensities.at<float>(i) = std::log10(intensities.at<float>(i)+1)/std::log10(max+1);
 
         }
@@ -214,7 +223,8 @@ public:
         for (size_t i = 0; i < max_rows * columns; i++)
         {   
             float temp = intensities.at<float>(i);
-            intensities.at<float>(i) = 127/60*(temp + 60);
+            // intensities.at<float>(i) = 255/127*(temp + 127);
+            intensities.at<float>(i) = 255/60*(temp + 60);
             // intensities.at<float>(i) = intensities.at<float>(i)/255;
         }
 
@@ -223,14 +233,16 @@ public:
         // apply scan conversion using preprocessed mapping
         constexpr float invalid_color = 0.0f;
         cv::remap(intensities, scan_converted, map_y, map_x, CV_INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(invalid_color)); 
-        writeMatToFile(scan_converted, "Simulated_US.txt");
+        
         
 
         // // // Filter image
-        // cv::Mat dst = scan_converted.clone();
-        // int MAX_KERNEL_LENGTH = 5;
-        // bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
-        // scan_converted = dst;
+        cv::Mat dst = scan_converted.clone();
+        int MAX_KERNEL_LENGTH = 5;
+        bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
+        scan_converted = dst;
+
+        writeMatToFile(scan_converted, "Simulated_US.txt");
     }
 
     void save(const std::string & filename) const
