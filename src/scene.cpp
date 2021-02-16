@@ -11,7 +11,7 @@
 //template std::array<std::vector<ray_physics::segment>, 256> scene::cast_rays<256>();
 // template std::array<std::vector<ray_physics::segment>, 1024> scene::cast_rays<1024>();
 // template std::array<std::vector<ray_physics::segment>, 2048> scene::cast_rays<2048>();
-template std::array<std::array<std::vector<ray_physics::segment>, 20>, 1024> scene::cast_rays<20, 1024>(transducer_ & transducer);
+template std::array<std::array<std::vector<ray_physics::segment>, 40>, 1024> scene::cast_rays<40, 1024>(transducer_ & transducer);
 // template std::array<std::vector<ray_physics::segment>, 512> scene::cast_rays<512>();
 scene::scene(const nlohmann::json & config, transducer_ & transducer) :
     transducer(transducer)
@@ -77,8 +77,8 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                 segments_vector.reserve(ray::max_depth);
             }
         }
-        // size_t ray_i = 473;
-        // size_t ray_i = 600;
+        // size_t ray_i = 638;
+        // size_t ray_i = 512;
         for (size_t ray_i = 0; ray_i < ray_count; ray_i++)
         {
             // auto & segments_vector = segments[ray_i];
@@ -177,7 +177,7 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                             // float distance = closestResults.m_hitPointWorld.distance(closestResults1.m_hitPointWorld);
                             float distance = (closestResults.m_hitPointWorld[0] - closestResults1.m_hitPointWorld[0])*(closestResults.m_hitPointWorld[0] - closestResults1.m_hitPointWorld[0]) + (closestResults.m_hitPointWorld[1] - closestResults1.m_hitPointWorld[1]) * (closestResults.m_hitPointWorld[1] - closestResults1.m_hitPointWorld[1]) + (closestResults.m_hitPointWorld[2] - closestResults1.m_hitPointWorld[2]) * (closestResults.m_hitPointWorld[2] - closestResults1.m_hitPointWorld[2]);
                             distance = sqrt(distance);
-                            if ( distance > 0.2 && distance < 4) // Abdomen: 2 
+                            if ( distance > 0 && distance < 4) // Abdomen: 2 
                             {   
                                 organ_second_hit = static_cast<mesh*>(closestResults1.m_collisionObject->getUserPointer());
                                 organ_first_hit = static_cast<mesh*>(closestResults.m_collisionObject->getUserPointer());
@@ -197,7 +197,7 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                                     
                                 }
 
-                                skip_scale = distance + 0.1; //Abdomen 2
+                                skip_scale = distance + 0.5; //Abdomen 2
                                 
                             }
                             else
@@ -220,7 +220,7 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                         
 
                         // segments_vector.emplace_back(segment{ray_.from, closestResults.m_hitPointWorld, ray_.direction, result.reflected_intensity, intensity_before_hit, ray_.media.attenuation, distance_before_hit, ray_.media});
-                        samples_vector[sample_i].emplace_back(segment{ray_.from, closestResults.m_hitPointWorld, ray_.direction, result.reflected_intensity, intensity_before_hit, ray_.media.attenuation, distance_before_hit, ray_.media});
+                        samples_vector[sample_i].emplace_back(segment{ray_.from, closestResults.m_hitPointWorld, ray_.direction, result.reflected_intensity, result.intensity_before_hit, ray_.media.attenuation, distance_before_hit, ray_.media});
                         // Spawn reflection and refraction rays
                        
                         if (result.refraction.intensity > ray::intensity_epsilon)
@@ -232,9 +232,9 @@ std::array<std::array<std::vector<ray_physics::segment>, sample_count>, ray_coun
                             // samples.at(sample_i) = result.refraction;
                         }
 
-                        // if (result.reflection.intensity > ray::intensity_epsilon)
+                        // if (result.reflection.intensity > ray::reflect_intensity_epsilon)
                         // {
-                        //     result.reflection.parent_collision = segments_vector.size()-1;
+                        //     result.reflection.parent_collision = samples_vector[sample_i].size()-1;
                         //     ray_stack.push_back(result.reflection);
                         // }
                         }

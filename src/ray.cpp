@@ -10,7 +10,7 @@ using namespace std;
 float index_num= 1.0;
 ray_physics::hit_result ray_physics::hit_boundary(ray & r, const btVector3 & hit_point, const btVector3 & surface_normal, const mesh & collided_mesh)
 {
-
+    float intensity_before_hit = r.intensity;
     // TODO: this logic can probably be simpler
     const material * material_after_vascularities = nullptr;
 
@@ -22,7 +22,7 @@ ray_physics::hit_result ray_physics::hit_boundary(ray & r, const btVector3 & hit
 
         ray reflection_ray { hit_point, -r.direction, r.depth+1, r.media, r.media_outside, 0, r.frequency, r.distance_traveled, 0 }; // set the reflection ray intensity equals to 0
         
-        return { 0.4, reflection_ray, refraction_ray }; // set the relfected intensity equals to 0.4
+        return { 0.4, intensity_before_hit,reflection_ray, refraction_ray }; // set the relfected intensity equals to 0.4
     }
     else
     {
@@ -49,7 +49,7 @@ ray_physics::hit_result ray_physics::hit_boundary(ray & r, const btVector3 & hit
         // Note: modify the refraction angle due to the strong refraction effect
         float theta_incidence_rad = acos(incidence_angle);
         float theta_refraction_rad = acos(refraction_angle);
-        refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*2/5 + theta_incidence_rad); 
+        refraction_angle = cos((theta_refraction_rad-theta_incidence_rad)*5/5 + theta_incidence_rad); 
         const bool total_internal_reflection = refraction_angle < 0;
         // Refraction direction
     
@@ -74,11 +74,12 @@ ray_physics::hit_result ray_physics::hit_boundary(ray & r, const btVector3 & hit
                                         reflection_intensity(r.intensity,
                                             r.media.impedance, incidence_angle,
                                             material_after_collision.impedance, refraction_angle);
-        // // attenuation intensity
-        // constexpr auto k = 0.1f;
-        // units::length::millimeter_t distance = segment_length_in_mm(r.from, hit_point);
+        // attenuation intensity
         
-        // r.intensity = r.intensity * std::exp(-r.media.attenuation * distance.to<float>() *0.1* 4.5 *k);
+        constexpr auto k = 0.1f;
+        units::length::millimeter_t distance = segment_length_in_mm(r.from, hit_point);
+        
+        r.intensity = r.intensity * std::exp(-r.media.attenuation * distance.to<float>() *0.1* 4.5 *k);
         
         // Refraction intensity
         const auto intensity_refr = r.intensity - intensity_refl;
@@ -100,7 +101,7 @@ ray_physics::hit_result ray_physics::hit_boundary(ray & r, const btVector3 & hit
         ray reflection_ray { hit_point, reflection_direction, r.depth+1, r.media, r.media_outside, intensity_refl > ray::intensity_epsilon ? intensity_refl : 0.0f, r.frequency, r.distance_traveled, 0 };
  
         // index_num++;
-        return { back_to_transducer_intensity, reflection_ray, refraction_ray };
+        return { back_to_transducer_intensity, intensity_before_hit, reflection_ray, refraction_ray };
     }
     
 }
@@ -174,7 +175,7 @@ float ray_physics::reflected_intensity(const float ray_intensity, const float in
     // Eq. 10 in Burger13
     constexpr auto small_reflections_enhancement_factor = 0.2;
     // TODO: adjust parameter
-    constexpr auto custom_reflection_enhancement_factor = 0.05; // we made this up
+    constexpr auto custom_reflection_enhancement_factor = 0.2; // we made this up
 
     const auto specular_factor = std::pow(incidence_angle, colliding_media.specularity);
     const auto impedance_factor = std::pow(( (colliding_media.impedance - ray_media.impedance)

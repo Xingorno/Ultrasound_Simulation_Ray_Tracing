@@ -14,6 +14,7 @@
 #include <string.h>
 #include <complex> 
 #include <math.h>
+#include <cmath>
 
 #include "psf.h"
 
@@ -209,7 +210,7 @@ public:
         writeMatToFile(intensities, "AfterConvolution.txt");
     }
 
-    void postprocess()
+    void postprocess(int index)
     {
         
 
@@ -227,12 +228,14 @@ public:
             // intensities.at<float>(i) = std::log10(intensities.at<float>(i)+1)/std::log10(max+1);
 
         }
-
+        std::random_device rd;
+        std::mt19937 generator(rd());
+        std::normal_distribution<double> distr(20, 5);
         for (size_t i = 0; i < max_rows * columns; i++)
         {   
             float temp = intensities.at<float>(i);
             // intensities.at<float>(i) = 255/127*(temp + 127);
-            intensities.at<float>(i) = 255/60*(temp + 60);
+            intensities.at<float>(i) = 255/60*(temp + 60) + distr(generator) ;
             // intensities.at<float>(i) = intensities.at<float>(i)/255;
         }
 
@@ -250,8 +253,27 @@ public:
         // bilateralFilter ( scan_converted, dst, MAX_KERNEL_LENGTH, 2, 2 );
       
         // scan_converted = dst;
+        std::string filename = std::to_string(index) + "simulated.txt";
+        cout << filename << endl;
+        std::ofstream fout(filename);
 
-        writeMatToFile(scan_converted, "Simulated_US.txt");
+        if(!fout)
+        {
+            cout<<"File Not Opened"<<endl;  return;
+        }
+
+        for(int i=0; i<scan_converted.rows; i++)
+        {
+            for(int j=0; j<scan_converted.cols; j++)
+            {
+            fout<<scan_converted.at<float>(i,j)<<"\t";
+            }
+            fout<<endl;
+        }
+
+        fout.close();
+        // writeMatToFile(scan_converted, std::strcat(num, array1));
+        
     }
 
     void save(const std::string & filename) const
@@ -283,6 +305,7 @@ public:
         }
         std::cout << std::endl;
     }
+
 
 
     void writeMatToFile(cv::Mat& m, const char* filename)

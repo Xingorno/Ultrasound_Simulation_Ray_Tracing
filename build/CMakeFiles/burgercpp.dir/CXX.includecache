@@ -112,18 +112,6 @@ array
 ratio
 -
 
-/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.cpp
-ray.h
-/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.h
-cmath
--
-iostream
--
-random
--
-mesh.h
-/home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/mesh.h
-
 /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/ray.h
 LinearMath/btVector3.h
 -
@@ -162,6 +150,8 @@ string.h
 complex
 -
 math.h
+-
+cmath
 -
 psf.h
 /home/sxing_l/Documents/UsSimulation/Ultrasound_Simulation_Ray_Tracing/src/psf.h

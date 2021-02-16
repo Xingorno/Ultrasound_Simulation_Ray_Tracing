@@ -24,7 +24,7 @@ class scene
 {
     // using transducer_ = transducer<512>;
     // typedef ::transducer<1024> transducer_;
-    typedef ::transducer<1024, 20> transducer_;
+    typedef ::transducer<1024, 40> transducer_;
     // typedef ::transducer<512> transducer_;
     // using transducer = transducer<512>;
 public:

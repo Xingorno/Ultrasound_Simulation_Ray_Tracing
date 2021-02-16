@@ -27,7 +27,8 @@ struct ray
     unsigned short parent_collision; // position in collision vector
 
     static constexpr size_t max_depth = 12;
-    static constexpr float intensity_epsilon = 0.1; //TODO: test
+    static constexpr float intensity_epsilon = 0.05; //TODO: test
+    static constexpr float reflect_intensity_epsilon = 0.0000001; //TODO: test
     bool null = false;
 };
 
@@ -47,7 +48,7 @@ struct collision
     unsigned short parent_collision; // position in collision vector
 };
 
-struct hit_result { float reflected_intensity; ray reflection, refraction; };
+struct hit_result { float reflected_intensity, intensity_before_hit; ray reflection, refraction; };
 
 hit_result hit_boundary(ray & r, const btVector3 &hit_point, const btVector3 & surface_normal, const mesh & collided_mesh);
 

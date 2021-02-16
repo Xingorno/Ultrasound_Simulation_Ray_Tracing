@@ -22,7 +22,7 @@ constexpr float transducer_frequency = 4.5f; // [Mhz]
 // TODO: which way to get axial resolution is more persuasive?
 constexpr millimeter_t axial_resolution = millimeter_t(1.45f / transducer_frequency); // [mm], the division can be deduced from Burger13 
 constexpr size_t transducer_elements = 1024;
-constexpr size_t samples_count = 20; 
+constexpr size_t samples_count =40; 
 constexpr radian_t transducer_amplitude = 70_deg;
 constexpr centimeter_t transducer_radius = 3_cm;
 constexpr centimeter_t ultrasound_depth = 15_cm; // [15cm -> μm]
@@ -38,7 +38,7 @@ using transducer_ = transducer<transducer_elements, samples_count>;
 
 std::random_device rd;
 std::mt19937 generator(rd());
-std::normal_distribution<double> distr(0.0001, 0.01);
+std::normal_distribution<double> distr(1, 0.1);
 
 
 int main(int argc, char** argv)
@@ -99,7 +99,8 @@ int main(int argc, char** argv)
         {
             auto temp_pos = (float)t_pos[2];
             // auto temp_pos = (float)t_pos[2]   - indexMov;
-            std::array<units::angle::degree_t, 3> movedAngle = {degree_t((float)t_dir[0]+0), degree_t((float)t_dir[1] + 0), degree_t((float)t_dir[2]+0)};
+            
+            std::array<units::angle::degree_t, 3> movedAngle = {degree_t((float)t_dir[0]+0), degree_t((float)t_dir[1] + 0), degree_t((float)t_dir[2] - indexMov)};
             transducer_ transducer_temp(transducer_frequency, transducer_radius, transducer_element_separation,
                            btVector3(t_pos[0], t_pos[1], temp_pos), movedAngle);
             rf_image.clear(); // Default set to (-2)
@@ -131,8 +132,8 @@ int main(int argc, char** argv)
                         {
                             float scattering = texture_volume.get_scattering(segment.media.mu1, segment.media.mu0, segment.media.sigma, point.x(), point.y(), point.z());
                             // float scattering = 0;
-                            // float scatter = intensity * scattering + distr(generator);
-                            float scatter = intensity * scattering;
+                            float scatter = intensity * scattering + distr(generator);
+                            // float scatter = intensity * scattering;
                             // float scatter = scattering;
                             // scatter = 0.000000;
 
@@ -143,7 +144,7 @@ int main(int argc, char** argv)
                             point += delta_step;
                             time_elapsed = time_elapsed + time_step;
 
-                            constexpr auto k = 0.17f;
+                            constexpr auto k = 0.1f;
                             intensity *= std::exp(-segment.attenuation * axial_resolution.to<float>()*0.1f * transducer_frequency*k);
                         }
 
@@ -158,34 +159,34 @@ int main(int argc, char** argv)
 
             rf_image.convolve(psf);
 
-            for (unsigned int ray_i = 0; ray_i < rays.size(); ray_i++)
-            {
-                const auto & ray = rays[ray_i];
-                for (unsigned int sample_i = 0; sample_i < samples_count; sample_i++)
-                {
-                    const auto & sample = ray[sample_i];
-                    int num_segment = sample.size();
-                    // for (auto & segment : ray)
-                    for(auto & segment: sample)
-                    {
-                        const auto starting_micros = rf_image.micros_traveled(segment.distance_traveled /*mm -> μm*/);
-                        const auto distance = scene.distance(segment.from, segment.to); // [mm]
-                        const auto steps = distance / axial_resolution;
-                        const auto time_step = rf_image.micros_traveled(axial_resolution); // [μs]
+            // for (unsigned int ray_i = 0; ray_i < rays.size(); ray_i++)
+            // {
+            //     const auto & ray = rays[ray_i];
+            //     for (unsigned int sample_i = 0; sample_i < samples_count; sample_i++)
+            //     {
+            //         const auto & sample = ray[sample_i];
+            //         int num_segment = sample.size();
+            //         // for (auto & segment : ray)
+            //         for(auto & segment: sample)
+            //         {
+            //             const auto starting_micros = rf_image.micros_traveled(segment.distance_traveled /*mm -> μm*/);
+            //             const auto distance = scene.distance(segment.from, segment.to); // [mm]
+            //             const auto steps = distance / axial_resolution;
+            //             const auto time_step = rf_image.micros_traveled(axial_resolution); // [μs]
 
-                        // Add reflection term, i.e. intensity directly reflected back to the transducer. See Burger13, Eq. 10.
-                        // rf_image.add_echo(ray_i, segment.reflected_intensity, starting_micros + time_step * (steps-1));
-                        rf_image.add_echo(ray_i, (segment.reflected_intensity * (1000)), starting_micros + time_step * steps);
-                    }
+            //             // Add reflection term, i.e. intensity directly reflected back to the transducer. See Burger13, Eq. 10.
+            //             // rf_image.add_echo(ray_i, segment.reflected_intensity, starting_micros + time_step * (steps-1));
+            //             rf_image.add_echo(ray_i, (segment.reflected_intensity * (1000)), starting_micros + time_step * steps);
+            //         }
                     
-                }    
+            //     }    
 
-            }
+            // }
 
 
 
             rf_image.envelope();
-            rf_image.postprocess();
+            rf_image.postprocess(indexMov);
             rf_image.show();
             
         }
